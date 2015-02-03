@@ -1,20 +1,15 @@
 <template name="dashboard">
-
-    <head>
-        <title>luddelogg</title>
-    </head>
-
-    <body>
-        <h1>The Ludde log</h1>
-        <div id="chart_div"></div>
-        <!--        {{>sleeptimes}}-->
-        <p>{{#if isItFriday}}It's Friday!{{else}}It's not Friday =/{{/if}}</p>
-    </body>
+	<h1>The Ludde log</h1>
+	{{>sleeptimes}}
+	<p>{{#if isItFriday}}It's Friday!{{else}}It's not Friday =/{{/if}}</p>
 </template>
 
 <template name="sleeptimes">
-    <h2>sleeptimes</h2>
-    <div class="logs">
+    <h2>Charts</h2>
+	{{#if googleLoaded}}
+	{{> charts}}
+	{{/if}}
+	<div class="logs">
         {{#each logentries}}
         <div class="logrow">
             <div class="log-date">Date: {{calendarDate}}</div>
@@ -23,4 +18,8 @@
         </div>
         {{/each}}
     </div>
+</template>
+
+<template name="charts">
+    <div id="chart-timeline"></div>
 </template>

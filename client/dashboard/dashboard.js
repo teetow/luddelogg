@@ -1,59 +1,66 @@
-Template.dashboard.helpers({
-    isItFriday: function() {
-        var d = new Date;
-        return d.getDay() == 5;
-    },
-});
-
-Template.dashboard.events({
-    'click button': function() {
-        // increment the counter when button is clicked
-        Session.set('counter', Session.get('counter') + 1);
-    }
-});
-
-
 Template.sleeptimes.helpers({
-    logentries: function() {
-        return Luddelog.find().fetch();
-    }
+	googleLoaded: function(){
+		return Session.equals('googleLoaded', true);
+	}
 });
 
-function initGoogleChart() {
-    // Load the Visualization API and the piechart package.
-    google.load('visualization', '1.0', {
-        'packages': ['corechart']
-    });
+Template.charts.rendered = function() {
+	if (Session.equals('googleLoaded', true))
+	{
+		console.log('drawing timeline chart.');
+		drawTimeline();
+	}
+}
 
-    // Set a callback to run when the Google Visualization API is loaded.
-    google.setOnLoadCallback(drawChart);
+function drawTimeline(){
+	console.log('requesting data...');
+	var groupedLogData = Meteor.call('getGroupedLogData', function(error, result){
+		drawTimelineChart(result);
+	});
+}
 
-    // Callback that creates and populates a data table,
-    // instantiates the pie chart, passes in the data and
-    // draws it.
-    function drawChart() {
+function drawTimelineChart(data){
+	console.log('drawing chart...');
+	var container = document.getElementById('chart-timeline');
+	var chart = new google.visualization.Timeline(container);
+	var dataTable = new google.visualization.DataTable();
 
-        // Create the data table.
-        var data = new google.visualization.DataTable();
-        data.addColumn('string', 'Topping');
-        data.addColumn('number', 'Slices');
-        data.addRows([
-            ['Mushrooms', 3],
-            ['Onions', 1],
-            ['Olives', 1],
-            ['Zucchini', 1],
-            ['Pepperoni', 2]
-        ]);
+	dataTable.addColumn({ type: 'string', id: 'Day' });
+	dataTable.addColumn({ type: 'string', id: 'Activity'})
+	dataTable.addColumn({ type: 'datetime', id: 'Start' });
+	dataTable.addColumn({ type: 'datetime', id: 'End' });
+	data.forEach(function(logitem, logintex, logarray) {
+		var date = logitem;
+		logitem.entries.forEach(function(entryitem, entryindex, entryarray){
+			if (entryitem.event != 'sleep')
+				return;
+			var calendarDate = new Date(entryitem.calendarDate);
+			var eventStart = new Date(entryitem.time);
+			var eventEnd = new Date(entryitem.sleepEnd);
+			var row = [
+				moment(calendarDate).format("YYYY-MM-DD"), 
+				entryitem.eventLabel, 
+				eventStart, 
+				eventEnd
+			];
+			dataTable.addRow(row);
+		});
+		var options = {
+			
+			colors: [
+				'#FBC02D',
+				'#5C6BC0',
+				'#4CAF50'
+			], 
+			avoidOverlappingGridLines: false,
+			timeline: {
+				showBarLabels: false
+			}
+		};
+		chart.draw(dataTable, options);
+	});
+}
 
-        // Set chart options
-        var options = {
-            'title': 'How Much Pizza I Ate Last Night',
-            'width': 400,
-            'height': 300
-        };
-
-        // Instantiate and draw our chart, passing in some options.
-        var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
-        chart.draw(data, options);
-    }
+function makeTimeOfDay(date){
+	return [date.getHours(), date.getMinutes(), date.getSeconds(), date.getMilliseconds()];
 }
