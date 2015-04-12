@@ -1,4 +1,25 @@
-#chart-timeline {
-	width: 1280px;
-	height: 960px;
+body {
+    width: calc(100vw - 32px);
+    height: 100%;
+	font-family: Roboto, sans serif;
+	font-size: 15px;
+}
+.dashboard {
+    display: flex;
+	width: calc(100% - 32px);
+	height: 100%;
+}
+.dashboard-section {
+}
+.section-status {
+	/**/
+}
+.section-lastlog {
+	padding: 24px;
+	flex-shrink: 0;
+}
+.section-sleepchart {
+	padding: 24px 24px 24px 0;
+	flex-grow: 1;
+	flex-shrink: 1;
 }

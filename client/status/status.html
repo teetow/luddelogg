@@ -1,0 +1,20 @@
+<template name="status">
+    <div class="status">
+        <div class="status-box">
+            <div class="status-state-text"> {{stateText}} </div>
+            <div class="status-state-icon {{stateIconClass}}"></div>
+            <div class="status-state-text"> {{stateTextTimer}} </div>
+            <div class="status-state-text"> {{stateTextDuration}} </div>
+            <div class="status-state-text">{{totalSleep}}</div>
+        </div>
+        <div class="status-box">
+            <div class="status-foodinfo-foodicons">
+            {{#each foodIcons}}
+            <div class="logicon-base {{iconclass}}"></div>
+            {{/each}}
+            </div>
+            <div class="status-foodinfo-totalfood">{{totalFood}}</div>
+            <div class="status-foodinfo-lastate">{{lastFood}}</div>
+        </div>
+    </div>
+</template>

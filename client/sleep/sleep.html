@@ -1,0 +1,13 @@
+<template name="sleep">
+    {{#if googleLoaded}}
+    	{{> sleepchart_gvis}}
+    {{/if}}
+</template>
+
+<template name="sleepchart_gvis">
+    {{#if sleepchartready}}
+  		{{sleepchart_gvis}}
+    {{else}}
+    <div>Sleep chart not ready.</div>
+    {{/if}}
+</template> 

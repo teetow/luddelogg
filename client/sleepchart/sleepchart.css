@@ -1,0 +1,115 @@
+* {
+    box-sizing: border-box;
+    transition: all 300ms cubic-bezier(0.300, 1.300, 0.600, 1.000);
+}
+
+body {
+    font-family: Roboto, Verdana;
+    font-size: 13px;
+}
+
+.sleepchart {
+    position: relative;
+    width: 100%;
+    padding: 32px;
+}
+
+.sleepchart-time {
+    position: absolute;
+    padding: 3px 6px;
+    background-color: red;
+    border: 2px solid white;
+    text-align: center;
+    border-radius: 12px;
+    width: 48px;
+    left: -22px;
+    top: -8px;
+}
+
+.sleepchart-row {
+    display: -webkit-flex;
+    height: 32px;
+    align-items: center;
+}
+
+.sleepchart-row.mod-weekend {
+    background-color: #f1f1f1;
+}
+
+.sleepchart-row.mod-today {
+    height: 48px;
+}
+
+.sleepchart-row-header {
+    flex: 0 0 auto;
+    margin: 0 24px 0 0;
+}
+
+.sleepchart-row-events {
+    font-size: 12px;
+    position: relative;
+    -webkit-flex: 1 1 auto;
+    height: calc(100% - 4px);
+}
+
+.sleepchart-row-event {
+    display: -webkit-inline-flex;
+    -webkit-justify-content: space-between;
+    -webkit-align-items: center;
+    position: absolute;
+    height: 100%;
+    margin: auto;
+    overflow: hidden;
+    color: white;
+}
+
+.sleepchart-row-event.mod-estimate {
+    -webkit-justify-content: flex-end;
+    background: repeating-linear-gradient( 45deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1) 4px, rgba(255, 255, 255, 0.3) 4px, rgba(255, 255, 255, 0.3) 8px);
+}
+
+.sleepchart-row-event.mod-timeline {
+    top: -4px;
+    left: -1px;
+    height: calc(100% + 8px);
+    width: 3px;
+    padding: 0;
+    z-index: 1;
+    background-color: red;
+    overflow: visible;
+}
+
+.event-time {
+    padding: 0 0 0 6px;
+    -webkit-flex: 0 0 auto;
+    /**/
+}
+
+.event-duration {
+    text-align: center;
+    overflow: hidden;
+    -webkit-flex: 1 1 auto;
+}
+
+.event-end {
+    text-align: right;
+    padding: 0 6px 0 0;
+    -webkit-flex: 0 1 auto;
+    overflow: hidden;
+    /**/
+}
+
+.mod-hidden {
+    display: none;
+}
+
+.sleepchart-tooltip {
+    background: #eef;
+    border: 2px solid #dde;
+    box-shadow: 0 2px 4px #000;
+    position: fixed;
+}
+
+.mod-hilight {
+    border: 2px solid orange;
+}

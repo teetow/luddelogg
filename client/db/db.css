@@ -1,0 +1,10 @@
+.db-log {
+    display: table;
+}
+.db-log-row {
+    display: table-row;
+}
+.db-log-row-cell {
+    display: table-cell;
+    padding: 12px;
+}

@@ -1,0 +1,52 @@
+.lastlog {
+    display: table;
+    border-collapse: collapse;
+}
+.logrow {
+    display: table-row;
+    background-color: #fff;
+}
+.logrow + .logrow {
+    border-top: 1px solid #ccc;
+}
+.log-date, .log-start, .log-entry, .log-time {
+    display: table-cell;
+    white-space: nowrap;
+    padding: 12px;
+}
+.log-description {
+    display: inline-block;
+    margin: 0 0 0 6px;
+}
+.logicon-base {
+    display: inline-block;
+    width: 26px;
+    height: 28px;
+    background-repeat: no-repeat;
+    background-size: 26px;
+    margin: -9px -5px;
+}
+.logicon-food-bottle {
+    background-image: url('food-bottle.svg');
+}
+.logicon-food-meal {
+    background-image: url('food-meal.svg');
+}
+.logicon-food-oatmeal {
+    background-image: url('food-oatmeal.svg');
+}
+.logicon-food-sandwich {
+    background-image: url('food-sandwich.svg');
+}
+.logicon-sleep-nap {
+    background-image: url('nap.svg');
+}
+.logicon-sleep-night {
+    background-image: url('sleep.svg');
+}
+.logicon-drops {
+    background-image: url('drops.svg');
+}
+.logicon-toothbrush {
+    background-image: url('toothbrush.svg');
+}

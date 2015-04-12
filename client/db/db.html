@@ -1,0 +1,38 @@
+<template name="db">
+    <h1>Database</h1>
+    {{#if dataLoaded}}
+        {{> dbOps }}
+	    {{> dbLog}}
+    {{else}}
+    <h3>Waiting for data...</h3>
+    {{/if}}
+</template>
+
+<template name="dbOps">
+    {{#if isSyncing}}
+    <button class="button-syncnow">Sync now</button>
+    {{else}}
+    <button class="button-syncnow">Sync now</button>
+    {{/if}}
+    <button class="button-reinit">Reinitialize from Google Sheet</button>
+</template>
+
+<template name="dbLog">
+    <div class="db-log">
+        {{#each dbLogEntries}} {{> dbLogEntry}} {{/each}}
+    </div>
+</template>
+
+<template name="dbLogEntry">
+    <div class="db-log-row">
+        <div class="db-log-row-cell">d: {{date}}</div>
+        <div class="db-log-row-cell">a: {{activity}}</div>
+        <div class="db-log-row-cell">l: {{label}}</div>
+        <div class="db-log-row-cell">t: {{time}}</div>
+        <div class="db-log-row-cell">e: {{end}}</div>
+        <div class="db-log-row-cell">d: {{duration}}</div>
+        <div class="db-log-row-cell">ts: {{timestamp}}</div>
+        <div class="db-log-row-cell">ets: {{endtimestamp}}</div>
+        <div class="db-log-row-cell">tsf: {{timestampformatted}}</div>
+    </div>
+</template>

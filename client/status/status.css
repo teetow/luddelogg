@@ -1,0 +1,24 @@
+.status {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 12px;
+}
+.status-box {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 0 0 256px;
+}
+.status-state-icon {
+    width: 96px;
+    height: 96px;
+    background-repeat: no-repeat;
+    background-size: 96px;
+}
+.status-state-icon-awake {
+    background-image: url('state-awake.svg');
+}
+.status-state-icon-asleep {
+    background-image: url('state-asleep.svg');
+}

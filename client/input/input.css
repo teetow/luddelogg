@@ -1,0 +1,12 @@
+.input-button {
+    height: 32px;
+    background-color: #369;
+    color: white;
+    width: 160px;
+    border: none;
+}
+
+.input-button.mod-disabled {
+    background-color: #999;
+}
+

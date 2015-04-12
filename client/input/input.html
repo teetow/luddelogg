@@ -1,0 +1,14 @@
+<template name="input">
+    <h2>Input</h2>
+    {{> inputbuttons}}
+</template>
+
+<template name="inputbuttons">
+    {{#if sheetReady}}
+    <button class="input-button js-button-sleep">Sleep</button>
+    <button class="input-button js-button-food">Food</button>
+    {{else}}
+    <button class="input-button mod-disabled">Sleep</button>
+    <button class="input-button mod-disabled">Food</button>
+    {{/if}}
+</template>

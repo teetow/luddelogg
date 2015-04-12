@@ -1,0 +1,36 @@
+<template name="lastlog">
+    <div class="lastlog">
+        {{#each logentries}}
+        <div class="logrow">
+            <div class="log-date">{{timestampformatted}}</div>
+            <div class="log-time">{{time}}</div>
+            <div class="log-entry">
+                {{#each logicons}}
+                <div class="logicon-base {{iconclass}}"></div>
+                {{/each}}
+                <div class="log-description">
+                    {{> Template.dynamic template=logdescription}}
+                </div>
+            </div>
+        </div>
+        {{else}}
+        <div>No data.</div>
+        {{/each}}
+    </div>
+</template>
+
+<template name="logDefault">Had {{label}}</template>
+
+<template name="logFood">Had {{label}}</template>
+
+<template name="logSleep">
+    {{#if end}} {{> logSleepFull}} {{else}} {{> logSleepStarted}} {{/if}}
+</template>
+<template name="logSleepStarted">Fell asleep</template>
+<template name="logSleepFull">Slept for {{duration}} hours (until {{end}})</template>
+
+<template name="logNap">
+    {{#if end}} {{> logNapFull}} {{else}} {{> logNapStarted}} {{/if}}
+</template>
+<template name="logNapStarted">Went for a nap</template>
+<template name="logNapFull">Napped for {{duration}} (until {{end}})</template>
