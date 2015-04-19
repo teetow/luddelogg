@@ -37,7 +37,13 @@ body {
 }
 
 .sleepchart-row.mod-today {
-    height: 48px;
+    height: 36px;
+    border: solid lightgray;
+    border-width: 1px 0 1px 0;
+}
+
+.sleepchart-row.mod-weekend + .sleepchart-row.mod-weekday {
+    border-top: 1px solid lightgray;
 }
 
 .sleepchart-row-header {
@@ -49,13 +55,10 @@ body {
     font-size: 12px;
     position: relative;
     -webkit-flex: 1 1 auto;
-    height: calc(100% - 4px);
+    height: calc(100% - 12px);
 }
 
 .sleepchart-row-event {
-    display: -webkit-inline-flex;
-    -webkit-justify-content: space-between;
-    -webkit-align-items: center;
     position: absolute;
     height: 100%;
     margin: auto;
@@ -63,20 +66,38 @@ body {
     color: white;
 }
 
-.sleepchart-row-event.mod-estimate {
-    -webkit-justify-content: flex-end;
-    background: repeating-linear-gradient( 45deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1) 4px, rgba(255, 255, 255, 0.3) 4px, rgba(255, 255, 255, 0.3) 8px);
-}
-
 .sleepchart-row-event.mod-timeline {
     top: -4px;
     left: -1px;
-    height: calc(100% + 8px);
+    height: calc(100% + 4px);
     width: 3px;
     padding: 0;
     z-index: 1;
     background-color: red;
     overflow: visible;
+}
+
+.sleepchart-row-event.event-sleep {
+    display: -webkit-inline-flex;
+    -webkit-justify-content: space-between;
+    -webkit-align-items: center;
+}
+
+.sleepchart-row-event.event-food {
+    overflow: visible;
+    /*background-color: #ff5722;*/
+    
+    width: 1px;
+    /*height: 50%;*/
+}
+
+.sleepchart-row-event.event-sleep-estimate {
+    -webkit-justify-content: flex-end;
+    background: repeating-linear-gradient( 45deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1) 4px, rgba(255, 255, 255, 0.3) 4px, rgba(255, 255, 255, 0.3) 8px);
+}
+
+.sleepchart-row-event.event-generic {
+    /**/
 }
 
 .event-time {
@@ -99,8 +120,8 @@ body {
     /**/
 }
 
-.mod-hidden {
-    display: none;
+.sleepchart-row-event-label {
+    /**/
 }
 
 .sleepchart-tooltip {
@@ -111,5 +132,42 @@ body {
 }
 
 .mod-hilight {
-    border: 2px solid orange;
+}
+
+.event-icon {
+    position: absolute;
+    width: 16px;
+    height: 100%;
+    background-position: 50%;
+    background-size: 16px;
+    background-repeat: no-repeat;
+    /*filter: saturate(10%);*/
+}
+
+.event-icon-bottle {
+    background-image: url("food-bottle.svg");
+}
+
+.event-icon-meal {
+    background-image: url("food-meal.svg");
+}
+
+.event-icon-oatmeal {
+    background-image: url("food-oatmeal.svg");
+}
+
+.event-icon-sandwich {
+    background-image: url("food-sandwich.svg");
+}
+
+.event-icon-fruit {
+    background-image: url("food-fruit.svg");
+}
+
+.event-icon-drops {
+    background-image: url("drops.svg");
+}
+
+.mod-hidden {
+    display: none;
 }

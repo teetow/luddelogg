@@ -14,14 +14,44 @@ Template.sleepchartEventEstimate.helpers({
         };
     },
 });
-Template.sleepchartEvent.onRendered(function() {
-    var $parentDiv = $(this.$(".sleepchart-row-event")[0]);
-});
-Template.sleepchartTooltip.helpers({
-    tooltipinfo: function() {
-        var tooltipinfo = Session.get("tooltipInfo");
-        if (tooltipinfo) {
-            return tooltipinfo;
+Template.sleepchartGenericEvent.helpers({
+    eventclass: function() {
+        switch (this.data.activity) {
+            case "sleep":
+                return "event-sleep";
+            case "food":
+                return "event-food";
+            case "medicine":
+                return "event-medicine";
         }
+        return "event-generic";
+    },
+    iconclass: function() {
+        switch (this.data.label) {
+            case "bottle":
+                return "event-icon-bottle";
+            case "meal":
+                return "event-icon-meal";
+            case "oatmeal":
+                return "event-icon-oatmeal";
+            case "sandwich":
+                return "event-icon-sandwich";
+            case "fruit":
+                return "event-icon-fruit";
+            case "drops":
+                return "event-icon-drops";
+        }
+        return "event-icon-generic";
+    },
+    labelclass: function() {
+        switch (this.data.activity) {
+            case "sleep":
+                return "label-sleep";
+            case "food":
+                return "label-food";
+            case "medicine":
+                return "label-medicine";
+        }
+        return "label-generic";
     },
 });

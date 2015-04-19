@@ -1,14 +1,22 @@
 Template.sleepchartRow.helpers({
     weekendclass: function() {
         var ts = moment(this.date, "YYYY-MM-DD");
-        if (ts.day() == 5 || ts.day() == 6) return "mod-weekend";
+        if (ts.day() == 5 || ts.day() == 6) {
+            return "mod-weekend";
+        }
+        return "mod-weekday";
     },
     todayclass: function() {
         return isToday(this) ? "mod-today" : "";
     },
     sleepchartEventTemplate: function() {
-        if (this.estimate) return "sleepchartEventEstimate";
-        return "sleepchartEvent";
+        if (this.data.activity == "sleep") {
+            if (this.estimate) {
+                return "sleepchartEventEstimate";
+            }
+            return "sleepchartEvent";
+        }
+        return "sleepchartGenericEvent";
     },
     isToday: function() {
         return isToday(this);

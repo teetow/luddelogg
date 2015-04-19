@@ -1,15 +1,65 @@
-var colors = {
-    "nap 1": "#ffa000",
-    "nap 2": "#5C6BC0",
-    "night": "#4CAF50",
+var chartPrefs = {
+    "default": {
+        color: "#999",
+        estimate: "00:30",
+    },
+    "sleep": {
+        "default": {
+            color: "#89f",
+            estimate: "01:00",
+        },
+        "nap 1": {
+            color: "#ffa000",
+            estimate: "02:00",
+        },
+        "nap 2": {
+            color: "#5C6BC0",
+            estimate: "01:30",
+        },
+        "night": {
+            color: "#4CAF50",
+            estimate: "10:30",
+        },
+    },
+    "food": {
+        "default": {
+            color: "#ff1100",
+            estimate: "01:00"
+        },
+        "meal": {
+            color: "#af9"
+        },
+        "oatmeal": {
+            color: "#91a"
+        },
+        "sandwich": {
+            color: "#10a"
+        },
+        "bottle": {
+            color: "#d92",
+            estimate: "00:10"
+        }
+    },
+    "medicine": {
+        default: {
+            color: "#9ac",
+            estimate: "00:30"
+        }
+    }
 };
-var defaultSleepTimes = {
-    "nap 1": "02:00",
-    "nap 2": "01:30",
-    "night": "10:00"
-};
+
+function getPref(activity, label, pref) {
+    var foundPref = chartPrefs["default"][pref];
+    if (chartPrefs[activity]) {
+        foundPref = chartPrefs[activity]["default"][pref];
+        if (chartPrefs[activity][label]) {
+            foundPref = chartPrefs[activity][label][pref];
+        }
+    }
+    return foundPref;
+}
 Template.sleepchart.onCreated(function() {
-    this.subscribe("logSleep");
+    this.subscribe("dbEventLog");
     Session.set("now", moment().toISOString());
     Meteor.setInterval(function() {
         Session.set("now", moment().toISOString());
@@ -19,9 +69,7 @@ Template.sleepchart.onCreated(function() {
 Template.sleepchart.helpers({
     sleeprows: function() {
         var chartdata = Template.instance().chartdata;
-        var sleepEvents = EventLog.find({
-            activity: "sleep"
-        }, {
+        var sleepEvents = EventLog.find({}, {
             sort: {
                 timestamp: -1
             }
@@ -52,18 +100,16 @@ Template.sleepchart.helpers({
             dateCollection.events.forEach(function(dateEvent) {
                 var startOfDay = moment(dateEvent.date, "YYYY-MM-DD");
                 var start = +moment(dateEvent.timestamp).diff(startOfDay);
-                var end = dateEvent.end;
                 var duration;
                 var isEstimate;
                 if (dateEvent.duration) {
                     duration = moment.duration(dateEvent.duration, "HH:mm");
                 } else {
-                    duration = moment.duration(defaultSleepTimes[dateEvent.label], "HH:mm");
-                    end = moment(start).clone().add(duration).format("HH:mm");
+                    duration = moment.duration(getPref(dateEvent.activity, dateEvent.label, "estimate"), "HH:mm");
                     isEstimate = true;
                 }
                 var positionPercentage = ((start - +chartdata.lowerBound) / chartdata.range) * 100;
-                var widthPercentage = (duration.asMilliseconds() / chartdata.range) * 100;
+                var widthPercentage = (duration) ? (duration.asMilliseconds() / chartdata.range) * 100 : undefined;
                 var row = {
                     // stupid, but I'm lazy
                     chartinfo: {
@@ -74,9 +120,9 @@ Template.sleepchart.helpers({
                     },
                     data: dateEvent,
                     left: positionPercentage,
-                    width: widthPercentage,
-                    color: colors[dateEvent.label],
-                    duration: duration.hours() + "h" + duration.minutes() + "m",
+                    width: widthPercentage ? widthPercentage : undefined,
+                    color: getPref(dateEvent.activity, dateEvent.label, "color"),
+                    duration: (duration) ? duration.hours() + "h" + duration.minutes() + "m" : undefined,
                     estimate: (isEstimate) ? true : undefined
                 };
                 sleepRow.push(row);
