@@ -1,6 +1,6 @@
 <template name="db">
     <h1>Database</h1>
-    {{#if dataLoaded}}
+    {{#if Template.subscriptionsReady}}
         {{> dbOps }}
 	    {{> dbLog}}
     {{else}}
@@ -9,11 +9,7 @@
 </template>
 
 <template name="dbOps">
-    {{#if isSyncing}}
     <button class="button-syncnow">Sync now</button>
-    {{else}}
-    <button class="button-syncnow">Sync now</button>
-    {{/if}}
     <button class="button-reinit">Reinitialize from Google Sheet</button>
 </template>
 

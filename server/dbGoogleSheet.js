@@ -100,7 +100,6 @@ function syncFromSheet(err, rows, info) {
         // stupid validity checking
         var dateSanityCheck = Date.parse(rowObject.timestamp);
         if (isNaN(dateSanityCheck)) return;
-        // var parsedTimestamp = moment(rowObject.timestamp + "+0100", "YYYY-MM-DD HH:mm:ssZZ");
         var parsedTimestamp = moment.tz(rowObject.timestamp, "Europe/Stockholm");
         if (!parsedTimestamp.isValid()) {
             console.log(parsedTimestamp + " is an invalid timestamp.");
@@ -117,7 +116,6 @@ function syncFromSheet(err, rows, info) {
             timestampformatted: moment(timestampDate).format("ddd MMM DD, YYYY"),
         };
         if (rowObject.endtimestamp) {
-            // var parsedEndTimestamp = moment(rowObject.endtimestamp + "+0100", "YYYY-MM-DD HH:mm:ssZZ");
             var parsedEndTimestamp = moment.tz(rowObject.endtimestamp, "Europe/Stockholm");
             if (parsedEndTimestamp.isValid()) {
                 logEntry.endtimestamp = new Date(parsedEndTimestamp);

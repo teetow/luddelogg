@@ -1,10 +1,14 @@
 <template name="sleepchart">
+    {{#if Template.subscriptionsReady}}
     <div class="sleepchart">
         {{#each sleeprows}}
             {{> sleepchartRow}}
         {{/each}}
         {{> sleepchartTooltip}}
     </div>
+    {{else}}
+    <div>Loading sleepchart...</div>
+    {{/if}}
 </template>
 <template name="sleepchartRow">
     <div class="sleepchart-row {{weekendclass}} {{todayclass}}">

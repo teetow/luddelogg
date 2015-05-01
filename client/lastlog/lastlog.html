@@ -1,4 +1,5 @@
 <template name="lastlog">
+    {{#if Template.subscriptionsReady}}
     <div class="lastlog">
         {{#each logentries}}
         <div class="logrow">
@@ -9,7 +10,7 @@
                 <div class="logicon-base {{iconclass}}"></div>
                 {{/each}}
                 <div class="log-description">
-                    {{> Template.dynamic template=logdescription}}
+                    {{> Template.dynamic template=logEntryTemplate}}
                 </div>
             </div>
         </div>
@@ -17,6 +18,9 @@
         <div>No data.</div>
         {{/each}}
     </div>
+    {{else}}
+    <div>Loading events...</div>
+    {{/if}}
 </template>
 
 <template name="logDefault">Had {{label}}</template>
@@ -24,13 +28,17 @@
 <template name="logFood">Had {{label}}</template>
 
 <template name="logSleep">
-    {{#if end}} {{> logSleepFull}} {{else}} {{> logSleepStarted}} {{/if}}
+    {{#if end}} {{> logSleepClosed}} {{else}} {{> logSleepOpen}} {{/if}}
 </template>
-<template name="logSleepStarted">Fell asleep</template>
-<template name="logSleepFull">Slept for {{duration}} hours (until {{end}})</template>
+
+<template name="logSleepOpen">Fell asleep</template>
+
+<template name="logSleepClosed">Slept for {{duration}} hours (until {{end}})</template>
 
 <template name="logNap">
-    {{#if end}} {{> logNapFull}} {{else}} {{> logNapStarted}} {{/if}}
+    {{#if end}} {{> logNapClosed}} {{else}} {{> logNapOpen}} {{/if}}
 </template>
-<template name="logNapStarted">Went for a nap</template>
-<template name="logNapFull">Napped for {{duration}} (until {{end}})</template>
+
+<template name="logNapOpen">Gone for a nap</template>
+
+<template name="logNapClosed">Napped for {{duration}} (until {{end}})</template>

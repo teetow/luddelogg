@@ -1,10 +1,6 @@
-Template.lastlog.created = function() {
-    Meteor.subscribe("logRecent",
-        function() {
-            console.log("subscribing to lastlog");
-        });
-}
-
+Template.lastlog.onCreated(function() {
+    this.subscribe("logRecent");
+});
 Template.lastlog.helpers({
     logentries: function() {
         return EventLog.find({}, {
@@ -14,13 +10,12 @@ Template.lastlog.helpers({
             limit: 50
         }).fetch();
     },
-    logdescription: function() {
+    logEntryTemplate: function() {
         switch (this.activity) {
             case "food":
                 return 'logFood';
             case "sleep":
-                if (this.label == "night")
-                    return 'logSleep';
+                if (this.label == "night") return 'logSleep';
                 return "logNap";
         }
         return "logDefault";
@@ -30,16 +25,13 @@ Template.lastlog.helpers({
         var eventlabelwords = this.label.split(" ");
         eventlabelwords.forEach(function(word, wordindex, wordarray) {
             var iconentry = LogIconTable[word];
-            if (iconentry != undefined)
-                logicons.push({
-                    iconclass: iconentry
-                });
+            if (iconentry != undefined) logicons.push({
+                iconclass: iconentry
+            });
         });
         return logicons;
     }
 });
-
-
 /*Template.lastlog.created = function() {
     var logentries = this.logentries = new ReactiveVar();
     var querystring = 'https://docs.google.com/spreadsheets/d/1Hwu_DVFvcNDnuiSPryRuCO4rgmD9k91tn7XuVZ0Zk6E/edit#gid=0&range=A:J';

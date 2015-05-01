@@ -1,7 +1,7 @@
 Template.sleepchartTooltip.helpers({
 	tooltipinfo: function() {
 		var tooltipinfo = Session.get("tooltipInfo");
-		if (!tooltipinfo) {
+		if (tooltipinfo === undefined || tooltipinfo.data === undefined) {
 			return;
 		}
 		if (tooltipinfo.data.duration) {

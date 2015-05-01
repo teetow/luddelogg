@@ -1,25 +1,6 @@
-Template.sleep.helpers({
-    googleLoaded: function() {
-        return Session.equals('googleLoaded', true);
-    },
-});
-
-Template.sleepchart_gvis.helpers({
-    sleepchartready: function() {
-        if (Template.instance() && Template.instance().sleepData && Template.instance().sleepData.get()) {
-            return true;
-        }
-        return false;
-    },
-    sleepchart_gvis: function() {
-        var sleepDataTable = Template.instance().sleepData.get();
-        if (sleepDataTable)
-            drawSleepChart(sleepDataTable);
-    }
-});
-
-Template.sleepchart_gvis.created = function() {
-    var sleepData = this.sleepData = new ReactiveVar();
+Template.sleepchart_gvis.onCreated(function() {
+    var self = this;
+    var sleepData = self.sleepData = new ReactiveVar();
     var querystring = 'https://docs.google.com/spreadsheets/d/1Hwu_DVFvcNDnuiSPryRuCO4rgmD9k91tn7XuVZ0Zk6E/edit#gid=0&range=A:G';
     var query = new google.visualization.Query(querystring);
     var qstr = "select * where A = 'sleep' order by F desc";
@@ -30,20 +11,36 @@ Template.sleepchart_gvis.created = function() {
             console.log(response.getMessage());
         }
         sleepData.set(getSleepData(response));
+        self.chartReady.set(true);
     });
-}
-
-Template.sleepchart_gvis.rendered = function() {
+    self.chartReady = new ReactiveVar(false);
+});
+Template.sleepchart_gvis.onRendered(function() {
     var sleepData = Template.instance().sleepData;
     $(window).resize(function() {
         drawSleepChart(sleepData.get());
     });
-}
+});
+Template.sleep.helpers({
+    googleLoaded: function() {
+        return Session.equals('googleLoaded', true);
+    },
+});
+Template.sleepchart_gvis.helpers({
+    sleepchartready: function() {
+        return Template.instance().chartReady.get();
+    },
+    sleepchart_gvis: function() {
+        var sleepDataTable = Template.instance().sleepData.get();
+        if (sleepDataTable) {
+            drawSleepChart(sleepDataTable);
+        }
+    }
+});
 
 function getSleepData(response) {
     var dataTable = response.getDataTable();
     var dataView = new google.visualization.DataView(dataTable);
-
     // show only sleep events
     dataView.setRows(dataView.getFilteredRows(
         [{
@@ -53,7 +50,6 @@ function getSleepData(response) {
             column: 3,
             minValue: "0"
         }]));
-
     dataView.setColumns(
         [{
             calc: function(t, r) {
@@ -97,8 +93,7 @@ function drawSleepChart(dataView) {
                 fontName: 'Roboto',
                 fontSize: '11px',
             }
-
         }
     };
     chart.draw(dataView, options);
-} 
+}

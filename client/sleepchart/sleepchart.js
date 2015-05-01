@@ -59,12 +59,17 @@ function getPref(activity, label, pref) {
     return foundPref;
 }
 Template.sleepchart.onCreated(function() {
-    this.subscribe("dbEventLog");
+    this.subscribe("dbEventLog", function() {});
+    this.chartdata = {};
+});
+Template.sleepchart.onRendered(function() {
     Session.set("now", moment().toISOString());
-    Meteor.setInterval(function() {
+    Meteor.setInterval(function secondTimer() {
         Session.set("now", moment().toISOString());
     }, 30000);
-    this.chartdata = {};
+});
+Template.sleepchart.onDestroyed(function() {
+    Meteor.clearInterval(secontTimer);
 });
 Template.sleepchart.helpers({
     sleeprows: function() {
