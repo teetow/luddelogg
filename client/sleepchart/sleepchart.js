@@ -147,7 +147,7 @@ Template.sleepchart.events({
         var targetDiv = $(e.currentTarget);
         Session.set("tooltipInfo", {
             pos: {
-                left: targetDiv.offset().left + (targetDiv.outerWidth() / 2) - 18 + "px",
+                left: (targetDiv.offset().left - $(window).scrollLeft()) + (targetDiv.outerWidth() / 2) - 18 + "px",
                 top: targetDiv.offset().top - $(window).scrollTop() - 18 + "px"
             },
             data: this.data,
