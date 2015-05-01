@@ -1,0 +1,10 @@
+{
+	"debug": true,
+	"useCellTextValues": true,
+	"spreadsheetId": "<spreadsheet ID here>",
+	"worksheetId": "<worksheed ID here>",
+	"oauth": {
+		"email": "<oauth service account email>",
+		"keyFile": "assets/app/luddelogg.pem"
+	}
+}

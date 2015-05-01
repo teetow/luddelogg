@@ -7,7 +7,9 @@
 .meteor/platforms
 .meteor/release
 .meteor/versions
-private/*
+private/luddelogg.pem
+private/luddelogg-unused.txt
+private/luddelogg-auth.json
 packages
 luddelogg.sublime-project
 luddelogg.sublime-workspace
