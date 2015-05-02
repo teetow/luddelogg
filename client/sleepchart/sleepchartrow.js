@@ -1,7 +1,7 @@
 Template.sleepchartRow.helpers({
     weekendclass: function() {
         var ts = moment(this.date, "YYYY-MM-DD");
-        if (ts.day() == 5 || ts.day() == 6) {
+        if (ts.day() === 0 || ts.day() === 6) {
             return "mod-weekend";
         }
         return "mod-weekday";
