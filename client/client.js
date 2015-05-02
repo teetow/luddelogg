@@ -2,6 +2,7 @@ LogIconTable = {
     oatmeal: "logicon-food-oatmeal",
     sandwich: "logicon-food-sandwich",
     bottle: "logicon-food-bottle",
+    fruit: "logicon-food-fruit",
     meal: "logicon-food-meal",
     nap: "logicon-sleep-nap",
     night: "logicon-sleep-night",

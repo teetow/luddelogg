@@ -52,7 +52,9 @@
 </template>
 <template name="sleepchartGenericEvent">
     <div class="sleepchart-row-event {{eventclass}}" style="left: {{left}}%;">
+        {{#each icons}}
         <div class="event-icon {{iconclass}}"></div>
+        {{/each}}
     </div>
 </template>
 <template name="sleepchartTooltip">

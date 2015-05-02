@@ -1,3 +1,12 @@
+var EventiconTable = {
+    bottle: "event-icon-bottle",
+    meal: "event-icon-meal",
+    oatmeal: "event-icon-oatmeal",
+    sandwich: "event-icon-sandwich",
+    fruit: "event-icon-fruit",
+    drops: "event-icon-drops",
+    toothbrush: "event-icon-toothbrush",
+};
 Template.sleepchartEventEstimate.helpers({
     estimate: function() {
         var nowMoment = moment(Session.get("now"));
@@ -33,22 +42,16 @@ Template.sleepchartGenericEvent.helpers({
         }
         return "event-generic";
     },
-    iconclass: function() {
-        switch (this.data.label) {
-            case "bottle":
-                return "event-icon-bottle";
-            case "meal":
-                return "event-icon-meal";
-            case "oatmeal":
-                return "event-icon-oatmeal";
-            case "sandwich":
-                return "event-icon-sandwich";
-            case "fruit":
-                return "event-icon-fruit";
-            case "drops":
-                return "event-icon-drops";
-        }
-        return "event-icon-generic";
+    icons: function() {
+        var eventicons = [];
+        var eventlabelwords = this.data.label.split(" ");
+        eventlabelwords.forEach(function(word, wordindex, wordarray) {
+            var iconentry = EventiconTable[word];
+            if (iconentry !== undefined) eventicons.push({
+                iconclass: iconentry
+            });
+        });
+        return eventicons;
     },
     labelclass: function() {
         switch (this.data.activity) {
