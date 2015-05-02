@@ -14,6 +14,13 @@ Template.sleepchartEventEstimate.helpers({
         };
     },
 });
+Template.sleepchartEvent.helpers({
+    options: function() {
+        var sleepchartTemplate = Template.instance().closestInstance("sleepchart");
+        var optionsObject = sleepchartTemplate.options.get();
+        return optionsObject;
+    },
+});
 Template.sleepchartGenericEvent.helpers({
     eventclass: function() {
         switch (this.data.activity) {

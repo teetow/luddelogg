@@ -61,6 +61,28 @@ function getPref(activity, label, pref) {
 Template.sleepchart.onCreated(function() {
     this.subscribe("dbEventLog", function() {});
     this.chartdata = {};
+    this.options = new ReactiveVar({
+        showstarttimes: {
+            label: "Start times",
+            type: "checkbox",
+            value: "true",
+        },
+        showendtimes: {
+            label: "End times",
+            type: "checkbox",
+            value: "true",
+        },
+        showfood: {
+            label: "Food",
+            type: "checkbox",
+            value: "true",
+        },
+        showsleep: {
+            label: "Sleep",
+            type: "checkbox",
+            value: "true",
+        }
+    });
 });
 Template.sleepchart.onRendered(function() {
     Session.set("now", moment().toISOString());
@@ -72,6 +94,27 @@ Template.sleepchart.onDestroyed(function() {
     Meteor.clearInterval(secontTimer);
 });
 Template.sleepchart.helpers({
+    options: function() {
+        var options = Template.instance().options.get();
+        var keys = _.keys(options);
+        var optionsArray = [];
+        keys.forEach(function(item, index, array) {
+            optionsArray.push({
+                name: item,
+                label: options[item].label,
+                type: options[item].type,
+                value: options[item].value
+            });
+        });
+        return optionsArray;
+    },
+    sleepchartOptionTemplate: function() {
+        switch (this.type) {
+            case "checkbox":
+                return "sleepchartOptionCheckbox";
+        }
+        return "sleepchartOptionGeneric";
+    },
     sleeprows: function() {
         var chartdata = Template.instance().chartdata;
         var sleepEvents = EventLog.find({}, {
