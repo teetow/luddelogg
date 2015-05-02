@@ -1,6 +1,5 @@
 * {
     box-sizing: border-box;
-    transition: all 300ms cubic-bezier(0.300, 1.300, 0.600, 1.000);
 }
 
 body {
@@ -27,8 +26,8 @@ body {
 }
 
 .sleepchart-row {
-    display: -webkit-flex;
-    height: 32px;
+    display: flex;
+    height: 40px;
     align-items: center;
 }
 
@@ -37,7 +36,7 @@ body {
 }
 
 .sleepchart-row.mod-today {
-    height: 36px;
+    height: 48px;
     border: solid lightgray;
     border-width: 1px 0 1px 0;
 }
@@ -48,14 +47,14 @@ body {
 
 .sleepchart-row-header {
     flex: 0 0 auto;
-    margin: 0 24px 0 0;
+    margin: 0 24px 0 8px;
 }
 
 .sleepchart-row-events {
     font-size: 12px;
     position: relative;
-    -webkit-flex: 1 1 auto;
-    height: calc(100% - 12px);
+    flex: 1 1 auto;
+    height: calc(100% - 8px);
 }
 
 .sleepchart-row-event {
@@ -70,7 +69,7 @@ body {
 .sleepchart-row-event.mod-timeline {
     top: -4px;
     left: -1px;
-    height: calc(100% + 4px);
+    height: calc(100% + 2px);
     width: 3px;
     padding: 0;
     z-index: 1;
@@ -79,21 +78,18 @@ body {
 }
 
 .sleepchart-row-event.event-sleep {
-    display: -webkit-inline-flex;
-    -webkit-justify-content: space-between;
-    -webkit-align-items: center;
+    display: inline-flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .sleepchart-row-event.event-food {
     overflow: visible;
-    /*background-color: #ff5722;*/
-    
     width: 1px;
-    /*height: 50%;*/
 }
 
 .sleepchart-row-event.event-sleep-estimate {
-    -webkit-justify-content: flex-end;
+    content: flex-end;
     background: repeating-linear-gradient( 45deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1) 4px, rgba(255, 255, 255, 0.3) 4px, rgba(255, 255, 255, 0.3) 8px);
 }
 
@@ -103,20 +99,20 @@ body {
 
 .event-time {
     padding: 0 0 0 6px;
-    -webkit-flex: 0 0 auto;
+    flex: 0 0 auto;
     /**/
 }
 
 .event-duration {
     text-align: center;
     overflow: hidden;
-    -webkit-flex: 1 1 auto;
+    flex: 1 1 auto;
 }
 
 .event-end {
     text-align: right;
     padding: 0 6px 0 0;
-    -webkit-flex: 0 1 auto;
+    flex: 0 1 auto;
     overflow: hidden;
     /**/
 }
