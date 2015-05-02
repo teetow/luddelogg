@@ -22,7 +22,7 @@
         <div class="sleepchart-row-header">{{date}}</div>
         <div class="sleepchart-row-events">
             {{#each sleepchartEvents}}
-                {{> UI.dynamic template=sleepchartEventTemplate}}
+                {{> Template.dynamic template=sleepchartEventTemplate}}
             {{/each}}
             {{#if isToday}}
             <div class="sleepchart-row-event mod-timeline" style="left: {{timeindicatorPos}}%;">
