@@ -2,11 +2,6 @@
     box-sizing: border-box;
 }
 
-body {
-    font-family: Roboto, Verdana;
-    font-size: 13px;
-}
-
 .sleepchart {
     position: relative;
     width: 100%;
@@ -61,7 +56,6 @@ body {
     position: absolute;
     height: 100%;
     margin: auto;
-    overflow: hidden;
     color: white;
     cursor: pointer;
 }
@@ -98,9 +92,11 @@ body {
 }
 
 .event-time {
-    padding: 0 0 0 6px;
+    position: absolute;
+    left: 3px;
+    top: 3px;
     flex: 0 0 auto;
-    /**/
+    overflow: hidden;
 }
 
 .event-duration {
@@ -110,11 +106,12 @@ body {
 }
 
 .event-end {
+    position: absolute;
     text-align: right;
-    padding: 0 6px 0 0;
+    bottom: 3px;
+    right: 3px;
     flex: 0 1 auto;
     overflow: hidden;
-    /**/
 }
 
 .sleepchart-row-event-label {
@@ -128,8 +125,7 @@ body {
     position: fixed;
 }
 
-.mod-hilight {
-}
+.mod-hilight {}
 
 .event-icon {
     position: absolute;
@@ -139,7 +135,6 @@ body {
     background-size: 16px;
     background-repeat: no-repeat;
     right: -8px;
-    /*filter: saturate(10%);*/
 }
 
 .event-icon-bottle {
