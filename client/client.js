@@ -9,11 +9,11 @@ LogIconTable = {
     drops: "logicon-drops",
     toothbrush: "logicon-toothbrush",
 };
-
+Meteor.startup(function() {
+});
 InputReady = new ReactiveVar(false);
-
 Router.map(function() {
-    this.route("/", function(){
+    this.route("/", function() {
         this.render('dashboard');
     });
     this.route('dashboard', {
@@ -44,35 +44,33 @@ Router.map(function() {
 });
 
 function loadChartPackages(packages) {
-    Session.set('googleLoaded', false);
-    google.load('visualization', '1', {
-        packages: packages,
-        callback: function() {
-            var s = (packages.length > 1) ? "s" : "";
-            console.log("package" + s + " loaded: " + packages.toString());
-            Session.set('googleLoaded', true);
-        }
-    });
-}
-
-// extend Blaze.View prototype to mimick jQuery's closest for views
-_.extend(Blaze.View.prototype,{
-    closest:function(viewName){
-        var view=this;
-        while(view){
-            if(view.name=="Template."+viewName){
+        Session.set('googleLoaded', false);
+        google.load('visualization', '1', {
+            packages: packages,
+            callback: function() {
+                var s = (packages.length > 1) ? "s" : "";
+                console.log("package" + s + " loaded: " + packages.toString());
+                Session.set('googleLoaded', true);
+            }
+        });
+    }
+    // extend Blaze.View prototype to mimick jQuery's closest for views
+_.extend(Blaze.View.prototype, {
+    closest: function(viewName) {
+        var view = this;
+        while (view) {
+            if (view.name == "Template." + viewName) {
                 return view;
             }
-            view=view.parentView;
+            view = view.parentView;
         }
         return null;
     }
 });
-
 // extend Blaze.TemplateInstance to expose added Blaze.View functionalities
-_.extend(Blaze.TemplateInstance.prototype,{
-    closestInstance:function(viewName){
-        var view=this.view.closest(viewName);
-        return view?view.templateInstance():null;
+_.extend(Blaze.TemplateInstance.prototype, {
+    closestInstance: function(viewName) {
+        var view = this.view.closest(viewName);
+        return view ? view.templateInstance() : null;
     }
 });
