@@ -10,11 +10,11 @@ Template.sleepchart.onCreated(function() {
         });
     };    
     this.options = new ReactiveVar({
-        showstarttimes: {label: "Start times",  type: "checkbox", value: true, },
+        showstarttimes: {label: "Starts",  type: "checkbox", value: true, },
         showdurations:  {label: "Durations",    type: "checkbox", value: false, },
-        showendtimes:   {label: "End times",    type: "checkbox", value: true, },
-        showfood:       {label: "Food",         type: "checkbox", value: true, },
-        showsleep:      {label: "Sleep",        type: "checkbox", value: true, },
+        showendtimes:   {label: "Ends",    type: "checkbox", value: true, },
+        // showfood:       {label: "Food",         type: "checkbox", value: true, },
+        // showsleep:      {label: "Sleep",        type: "checkbox", value: true, },
     });
     this.chartPrefs = {
         getPref: function(activity, label, pref) {
