@@ -2,9 +2,7 @@
     {{#if Template.subscriptionsReady}}
     <div class="sleepchart-options">
         {{#each options}}
-        <div class="sleepchart-option">
             {{> Template.dynamic template=sleepchartOptionTemplate}}
-        </div>
         {{/each}}
     </div>
     <div class="sleepchart">
@@ -34,12 +32,9 @@
 </template>
 <template name="sleepchartEvent">
     <div class="sleepchart-row-event event-sleep" style="left: {{left}}%; width: {{width}}%; background-color: {{color}};">
-        {{#if options.showstarttimes.value}}
-        <div class="event-time">{{data.time}}</div>
-        {{/if}}
-        {{#if options.showendtimes.value}}
-        <div class="event-end">{{data.end}}</div>
-        {{/if}}
+        {{#if options.showstarttimes.value}}    <div class="event-time">        {{data.time}}       </div>{{/if}}
+        {{#if options.showdurations.value}}     <div class="event-duration">    {{data.duration}}   </div>{{/if}}
+        {{#if options.showendtimes.value}}      <div class="event-end">         {{data.end}}        </div>{{/if}}
     </div>
 </template>
 <template name="sleepchartEventEstimate">

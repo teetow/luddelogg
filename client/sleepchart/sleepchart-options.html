@@ -1,13 +1,12 @@
-<template name="sleepchartOptions">
-    <div class="sleepchart-options">
+<template name="sleepchartOptionCheckbox">
+    <div class="sleepchart-option">
+        <div class="sleepchart-option-checkbox {{checkedClass}}" name="{{name}}"></div>
+        <div class="sleepchart-option-label">{{label}}</div>
     </div>
 </template>
-<template name="sleepchartOptionCheckbox">
-	<input type="checkbox" class="sleepchart-option-checkbox" name="{{name}}" checked="{{value}}" />
-	<div class="sleepchart-option-label">{{label}}</div>
-</template>
-
 <template name="sleepchartOptionGeneric">
-	<div class="sleepchart-option-generic-name">{{label}}</div>
-	<input class="sleepchart-option-generic-name" value="{{value}}" />
+    <div class="sleepchart-option">
+        <div class="sleepchart-option-generic-name">{{label}}</div>
+        <input class="sleepchart-option-generic-name" value="{{value}}" />
+    </div>
 </template>

@@ -1,8 +1,12 @@
 Template.sleepchartOptionCheckbox.events({
-	"click .sleepchart-option-checkbox": function(event, template) {
-		var x = template.$('input').is(":checked");
+	"click .sleepchart-option": function(event, template) {
 		var options = Template.instance().closestInstance("sleepchart").options.get();
-		options[template.$("input").attr("name")].value = x;
+		options[this.name].value = !options[this.name].value;
 		Template.instance().closestInstance("sleepchart").options.set(options);
+	},
+});
+Template.sleepchartOptionCheckbox.helpers({
+	checkedClass: function() {
+		return Template.instance().closestInstance("sleepchart").options.get()[this.name].value ? "mod-checked" : "";
 	},
 });

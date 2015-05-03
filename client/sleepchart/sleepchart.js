@@ -1,63 +1,3 @@
-var chartPrefs = {
-    "default": {
-        color: "#999",
-        estimate: "00:30",
-    },
-    "sleep": {
-        "default": {
-            color: "#89f",
-            estimate: "01:00",
-        },
-        "nap 1": {
-            color: "#ffa000",
-            estimate: "02:00",
-        },
-        "nap 2": {
-            color: "#5C6BC0",
-            estimate: "01:30",
-        },
-        "night": {
-            color: "#4CAF50",
-            estimate: "10:30",
-        },
-    },
-    "food": {
-        "default": {
-            color: "#ff1100",
-            estimate: "01:00"
-        },
-        "meal": {
-            color: "#af9"
-        },
-        "oatmeal": {
-            color: "#91a"
-        },
-        "sandwich": {
-            color: "#10a"
-        },
-        "bottle": {
-            color: "#d92",
-            estimate: "00:10"
-        }
-    },
-    "medicine": {
-        default: {
-            color: "#9ac",
-            estimate: "00:30"
-        }
-    }
-};
-
-function getPref(activity, label, pref) {
-    var foundPref = chartPrefs["default"][pref];
-    if (chartPrefs[activity]) {
-        foundPref = chartPrefs[activity]["default"][pref];
-        if (chartPrefs[activity][label]) {
-            foundPref = chartPrefs[activity][label][pref];
-        }
-    }
-    return foundPref;
-}
 Template.sleepchart.onCreated(function() {
     this.subscribe("dbEventLog", function() {});
     this.chartdata = {};
@@ -65,24 +5,88 @@ Template.sleepchart.onCreated(function() {
         showstarttimes: {
             label: "Start times",
             type: "checkbox",
-            value: "true",
+            value: true,
+        },
+        showdurations: {
+            label: "Durations",
+            type: "checkbox",
+            value: true,
         },
         showendtimes: {
             label: "End times",
             type: "checkbox",
-            value: "true",
+            value: true,
         },
         showfood: {
             label: "Food",
             type: "checkbox",
-            value: "true",
+            value: true,
         },
         showsleep: {
             label: "Sleep",
             type: "checkbox",
-            value: "true",
+            value: true,
         }
     });
+    this.chartPrefs = {
+        getPref: function(activity, label, pref) {
+            var foundPref = this["default"][pref];
+            if (this[activity]) {
+                foundPref = this[activity]["default"][pref];
+                if (this[activity][label]) {
+                    foundPref = this[activity][label][pref];
+                }
+            }
+            return foundPref;
+        },
+        "default": {
+            color: "#999",
+            estimate: "00:30",
+        },
+        "sleep": {
+            "default": {
+                color: "#89f",
+                estimate: "01:00",
+            },
+            "nap 1": {
+                color: "#ffa000",
+                estimate: "02:00",
+            },
+            "nap 2": {
+                color: "#5C6BC0",
+                estimate: "01:30",
+            },
+            "night": {
+                color: "#4CAF50",
+                estimate: "10:30",
+            },
+        },
+        "food": {
+            "default": {
+                color: "#ff1100",
+                estimate: "01:00"
+            },
+            "meal": {
+                color: "#af9"
+            },
+            "oatmeal": {
+                color: "#91a"
+            },
+            "sandwich": {
+                color: "#10a"
+            },
+            "bottle": {
+                color: "#d92",
+                estimate: "00:10"
+            }
+        },
+        "medicine": {
+            default: {
+                color: "#9ac",
+                estimate: "00:30"
+            }
+        }
+    };
 });
 Template.sleepchart.onRendered(function() {
     Session.set("now", moment().toISOString());
@@ -91,7 +95,7 @@ Template.sleepchart.onRendered(function() {
     }, 30000);
 });
 Template.sleepchart.onDestroyed(function() {
-    Meteor.clearInterval(secontTimer);
+    Meteor.clearInterval(secondTimer);
 });
 Template.sleepchart.helpers({
     options: function() {
@@ -153,7 +157,7 @@ Template.sleepchart.helpers({
                 if (dateEvent.duration) {
                     duration = moment.duration(dateEvent.duration, "HH:mm");
                 } else {
-                    duration = moment.duration(getPref(dateEvent.activity, dateEvent.label, "estimate"), "HH:mm");
+                    duration = moment.duration(Template.instance().chartPrefs.getPref(dateEvent.activity, dateEvent.label, "estimate"), "HH:mm");
                     isEstimate = true;
                 }
                 var positionPercentage = ((start - +chartdata.lowerBound) / chartdata.range) * 100;
@@ -169,7 +173,7 @@ Template.sleepchart.helpers({
                     data: dateEvent,
                     left: positionPercentage,
                     width: widthPercentage ? widthPercentage : undefined,
-                    color: getPref(dateEvent.activity, dateEvent.label, "color"),
+                    color: Template.instance().chartPrefs.getPref(dateEvent.activity, dateEvent.label, "color"),
                     duration: (duration) ? duration.hours() + "h" + duration.minutes() + "m" : undefined,
                     estimate: (isEstimate) ? true : undefined
                 };
