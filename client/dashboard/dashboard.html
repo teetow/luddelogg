@@ -1,15 +1,11 @@
 <head>
-	<meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name=viewport content="width=device-width, initial-scale=1">
 </head>
 <template name="dashboard">
     <h1>The Ludde log</h1>
-    {{#if googleLoaded}}
     <div class="dashboard">
-        <div class="dashboard-section">
-            <!-- <div class="section-status">{{> status}} </div> -->
-            <div class="dashboard-section section-lastlog"> {{> lastlog}} </div>
-        </div>
-        <div id="chart-sleep" class="dashboard-section section-sleepchart"> {{> sleepchart_gvis}} </div>
+        <div class="section-status">{{> status}} </div>
+        <div class="dashboard-section section-lastlog"> {{> lastlog}} </div>
     </div>
-    {{/if}}
 </template>

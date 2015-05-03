@@ -1,32 +1,20 @@
 Template.sleepchart.onCreated(function() {
-    this.subscribe("dbEventLog", function() {});
-    this.chartdata = {};
+    var instance = this;
+    instance.chartdata = new ReactiveVar();
+    instance.subscribe("dbEventLog");
+    instance.events = function(){
+        return EventLog.find({}, {
+            sort: {
+                timestamp: -1
+            }
+        });
+    };    
     this.options = new ReactiveVar({
-        showstarttimes: {
-            label: "Start times",
-            type: "checkbox",
-            value: true,
-        },
-        showdurations: {
-            label: "Durations",
-            type: "checkbox",
-            value: true,
-        },
-        showendtimes: {
-            label: "End times",
-            type: "checkbox",
-            value: true,
-        },
-        showfood: {
-            label: "Food",
-            type: "checkbox",
-            value: true,
-        },
-        showsleep: {
-            label: "Sleep",
-            type: "checkbox",
-            value: true,
-        }
+        showstarttimes: {label: "Start times",  type: "checkbox", value: true, },
+        showdurations:  {label: "Durations",    type: "checkbox", value: false, },
+        showendtimes:   {label: "End times",    type: "checkbox", value: true, },
+        showfood:       {label: "Food",         type: "checkbox", value: true, },
+        showsleep:      {label: "Sleep",        type: "checkbox", value: true, },
     });
     this.chartPrefs = {
         getPref: function(activity, label, pref) {
@@ -39,53 +27,13 @@ Template.sleepchart.onCreated(function() {
             }
             return foundPref;
         },
-        "default": {
-            color: "#999",
-            estimate: "00:30",
-        },
+        "default": {color: "#999", estimate: "00:30", },
         "sleep": {
-            "default": {
-                color: "#89f",
-                estimate: "01:00",
-            },
-            "nap 1": {
-                color: "#ffa000",
-                estimate: "02:00",
-            },
-            "nap 2": {
-                color: "#5C6BC0",
-                estimate: "01:30",
-            },
-            "night": {
-                color: "#4CAF50",
-                estimate: "10:30",
-            },
+            "default":  {color: "#89f",     estimate: "01:00",},
+            "nap 1":    {color: "#ffa000",  estimate: "02:00",},
+            "nap 2":    {color: "#5C6BC0",  estimate: "01:30",},
+            "night":    {color: "#4CAF50",  estimate: "10:30",},
         },
-        "food": {
-            "default": {
-                color: "#ff1100",
-                estimate: "01:00"
-            },
-            "meal": {
-                color: "#af9"
-            },
-            "oatmeal": {
-                color: "#91a"
-            },
-            "sandwich": {
-                color: "#10a"
-            },
-            "bottle": {
-                color: "#d92",
-                estimate: "00:10"
-            }
-        },
-        "medicine": {
-            default: {
-                color: "#9ac",
-                estimate: "00:30"
-            }
-        }
     };
 });
 Template.sleepchart.onRendered(function() {
@@ -121,11 +69,7 @@ Template.sleepchart.helpers({
     },
     sleeprows: function() {
         var chartdata = Template.instance().chartdata;
-        var sleepEvents = EventLog.find({}, {
-            sort: {
-                timestamp: -1
-            }
-        }).fetch();
+        var sleepEvents = Template.instance().events().fetch();
         var groupedSleepEvents = [];
         $.each(_.groupBy(sleepEvents, "date"), function(date, events) {
             $.each(events, function(index, event) {
@@ -138,7 +82,9 @@ Template.sleepchart.helpers({
                 if (!event.endtimestamp) return;
                 var endtimestamp = moment(event.endtimestamp);
                 var elapsedEndTime = +endtimestamp.diff(startOfDay);
-                if (!chartdata.upperBound || elapsedEndTime > chartdata.upperBound) chartdata.upperBound = elapsedEndTime;
+                if (!chartdata.upperBound || elapsedEndTime > chartdata.upperBound) {
+                    chartdata.upperBound = elapsedEndTime;
+                }
             });
             groupedSleepEvents.push({
                 date: date,

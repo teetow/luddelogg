@@ -1,4 +1,6 @@
 <template name="status">
+    <h3>Status</h3>
+    {{#if Template.subscriptionsReady}}
     <div class="status">
         <div class="status-box">
             <div class="status-state-text"> {{stateText}} </div>
@@ -9,12 +11,15 @@
         </div>
         <div class="status-box">
             <div class="status-foodinfo-foodicons">
-            {{#each foodIcons}}
-            <div class="logicon-base {{iconclass}}"></div>
-            {{/each}}
+                {{#each foodIcons}}
+                <div class="logicon-base {{iconclass}}"></div>
+                {{/each}}
             </div>
             <div class="status-foodinfo-totalfood">{{totalFood}}</div>
             <div class="status-foodinfo-lastate">{{lastFood}}</div>
         </div>
     </div>
+    {{else}}
+    <div>Loading status...</div>
+    {{/if}}
 </template>

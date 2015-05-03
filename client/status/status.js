@@ -1,169 +1,118 @@
-Template.status.created = function() {
-    var state = this.state = new ReactiveVar();
-    Meteor.setInterval(function() {
+Template.status.onCreated(function() {
+    var instance = this;
+    Meteor.setInterval(function getNow() {
         Session.set("now", moment().toDate());
     }, 1000);
+    instance.subscribe("logToday", function() {
+        instance.state = new ReactiveVar();
+        instance.state.set(getState(instance.todayEvents()));
+    });
+    instance.todayEvents = function() {
+        return getToday(EventLog);
+    };
+});
+Template.status.onDestroyed(function() {
+    Meteor.clearInterval(getNow);
+});
 
-    Meteor.subscribe("logToday", {
-        onReady: function() {
-            Tracker.autorun(function() {
-                state.set(getStatus(EventLog.find()));
-            });
-        },
-        onError: function() {
-            console.log("Error subscribing to TodayLog.");
-        }
-    })
-}
-
-function getStatus(eventLogCursor) {
-    var logentries = eventLogCursor.fetch();
+function getState(todayCollection) {
+    var todayEvents = todayCollection.fetch();
     var state = {};
-
-    // total sleep
-    var totalSleep = moment.duration(0);
-    var totalFood = 0;
-    logentries.forEach(function(item) {
+    state.foodEvents = [];
+    state.totalSleep = moment.duration(0);
+    todayEvents.forEach(function(item) {
         if (item.activity == "sleep") {
+            if (!state.lastSleep || item.timestamp > state.lastSleep.timestamp) {
+                state.lastSleep = item;
+            }
             if (item.endtimestamp) {
                 var start = moment.utc(item.timestamp);
                 var end = moment.utc(item.endtimestamp);
                 var duration = moment.duration(end.diff(start));
-                totalSleep += duration;
+                state.totalSleep += duration;
             }
         } else if (item.activity == "food") {
-            totalFood++;
+            state.foodEvents.push(item);
+            if (!state.lastFood || item.timestamp > state.lastFood.timestamp) {
+                state.lastFood = item;
+            }
         }
     });
-    state.totalSleep = totalSleep;
-    state.totalFood = totalFood;
-
-    // last sleep
-    var lastSleepEntry = EventLog.findOne({
-        activity: "sleep",
-    }, {
-        sort: {
-            timestamp: -1
-        },
-        limit: 1
-    });
-    if (lastSleepEntry) {
+    if (state.lastSleep) {
         state.lastState = "asleep";
-        state.lastTransition = lastSleepEntry.timestamp;
-        state.lastSleep = lastSleepEntry.timestamp;
+        state.lastTransition = state.lastSleep.timestamp;
         state.lastAwake = undefined;
-        if (lastSleepEntry.end) {
+        if (state.lastSleep.endtimestamp) {
             state.lastState = "awake";
-            state.lastTransition = lastSleepEntry.endtimestamp;
-            state.lastAwake = lastSleepEntry.endtimestamp;
+            state.lastTransition = state.lastSleep.endtimestamp;
+            state.lastAwake = state.lastSleep.endtimestamp;
         }
     }
-
-    // food data
-    var lastFoodEntry = EventLog.findOne({
-        activity: "food",
-    }, {
-        sort: {
-            timestamp: -1
-        },
-        limit: 20
-    });
-    state.lastFood = lastFoodEntry ? lastFoodEntry.timestamp : undefined;
     return state;
 }
-
 var stateIconLookup = {
     awake: "status-state-icon-awake",
     asleep: "status-state-icon-asleep"
-}
-
+};
 Template.status.helpers({
     stateIconClass: function() {
-        if (Template.instance() && Template.instance().state) {
-            var state = Template.instance().state.get();
-            if (state) {
-                return stateIconLookup[state.lastState];
-            }
+        var state = Template.instance().state.get();
+        if (state && state.lastState) {
+            return stateIconLookup[state.lastState];
         }
     },
     stateTextTimer: function() {
-        if (Template.instance() && Template.instance().state) {
-            var state = Template.instance().state.get();
-            if (state) {
-                var now = Session.get("now");
-                var then = state.lastTransition;
-                var timer = moment(now).diff(moment(then));
-                return moment.utc(timer).format("HH:mm:ss");
-            }
+        var state = Template.instance().state.get();
+        if (state) {
+            var now = Session.get("now");
+            var then = state.lastTransition;
+            var timer = moment(now).diff(moment(then));
+            return moment.utc(timer).format("HH:mm:ss");
         }
     },
     stateText: function() {
-        if (Template.instance() && Template.instance().state) {
-            var state = Template.instance().state.get();
-            if (state) {
-                var outputText;
-                if (state.lastState == "awake")
-                    outputText = "Awake since ";
-                else
-                    outputText = "Asleep since ";
-
-                return outputText + moment(state.lastTransition).format("HH:mm");
-            }
+        var state = Template.instance().state.get();
+        if (state) {
+            var outputText;
+            if (state.lastState == "awake") outputText = "Awake since ";
+            else outputText = "Asleep since ";
+            return outputText + moment(state.lastTransition).format("HH:mm");
         }
     },
     stateTextDuration: function() {
-        if (Template.instance() && Template.instance().state) {
-            var state = Template.instance().state.get();
-            if (state) {
-                var timeSince = moment(state.lastTransition).from(Session.get('now'));
-
-                if (timeSince)
-                    return "(About " + timeSince + ")";
-            }
+        var state = Template.instance().state.get();
+        if (state) {
+            var timeSince = moment(state.lastTransition).from(Session.get('now'));
+            if (timeSince) return "(About " + timeSince + ")";
         }
     },
     totalSleep: function() {
-        if (Template.instance() && Template.instance().state) {
-            var state = Template.instance().state.get();
-            if (state && state.totalSleep)
-                return "Slept " + moment.utc(state.totalSleep).format("HH:mm") + " today";
-        }
+        var state = Template.instance().state.get();
+        if (state && state.totalSleep) return "Slept " + moment.utc(state.totalSleep).format("HH:mm") + " today";
     },
     totalFood: function() {
-        if (Template.instance() && Template.instance().state) {
-            var state = Template.instance().state.get();
-            if (state && state.totalSleep)
-                return "Eaten " + state.totalFood + " times";
-        }
+        var state = Template.instance().state.get();
+        if (state && state.totalSleep) return "Eaten " + state.foodEvents.length + " times";
     },
     lastFood: function() {
-        if (Template.instance() && Template.instance().state) {
-            var state = Template.instance().state.get();
-            if (state && state.lastFood)
-                return "Last ate " + moment.utc(state.lastFood).from(Session.get('now'));
-        }
+        var state = Template.instance().state.get();
+        if (state && state.lastFood) return "Last ate " + moment.utc(state.lastFood.timestamp).from(Session.get('now'));
     },
     foodIcons: function() {
-        if (Template.instance() && Template.instance().state) {
-            foodIcons = [];
-            var foodEvents = EventLog.find({
-                activity: "food"
-            }, {
-                sort: {
-                    timestamp: -1
-                }
-            }).fetch();
-            foodEvents.forEach(function(foodEvent) {
-                foodWords = foodEvent.label.split(" ");
-                foodWords.forEach(function(foodWord) {
-                    var foodIconClass = LogIconTable[foodWord];
-                    if (foodIconClass)
-                        foodIcons.push({
-                            iconclass: foodIconClass
-                        });
-                })
-            })
+        var state = Template.instance().state.get();
+        if (!state || !state.foodEvents) {
+            return;
         }
+        foodIcons = [];
+        state.foodEvents.forEach(function(foodEvent) {
+            foodWords = foodEvent.label.split(" ");
+            foodWords.forEach(function(foodWord) {
+                var foodIconClass = LogIconTable[foodWord];
+                if (foodIconClass) foodIcons.push({
+                    iconclass: foodIconClass
+                });
+            });
+        });
         return foodIcons;
     }
 });

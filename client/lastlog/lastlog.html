@@ -1,44 +1,42 @@
 <template name="lastlog">
+    <h3>Lastlog</h3>
     {{#if Template.subscriptionsReady}}
     <div class="lastlog">
-        {{#each logentries}}
-        <div class="logrow">
-            <div class="log-date">{{timestampformatted}}</div>
-            <div class="log-time">{{time}}</div>
-            <div class="log-entry">
-                {{#each logicons}}
-                <div class="logicon-base {{iconclass}}"></div>
-                {{/each}}
-                <div class="log-description">
-                    {{> Template.dynamic template=logEntryTemplate}}
+        {{#each logEntryGroups}}
+        <div class="logday">
+            <div class="log-header">{{date}}</div>
+            {{#each logentries}}
+            <div class="logrow">
+                <!-- <div class="log-date">{{timestampformatted}}</div> -->
+                <div class="log-time">{{time}}</div>
+                <div class="log-entry">
+                    {{#each logicons}}
+                    <div class="logicon-base {{iconclass}}"></div>
+                    {{/each}}
+                    <div class="log-description">
+                        {{> Template.dynamic template=logEntryTemplate}}
+                    </div>
                 </div>
             </div>
+            {{else}}
+            <div>No data.</div>
+            {{/each}}
         </div>
         {{else}}
-        <div>No data.</div>
+        <div>Loading events...</div>
         {{/each}}
     </div>
-    {{else}}
-    <div>Loading events...</div>
     {{/if}}
 </template>
-
 <template name="logDefault">Had {{label}}</template>
-
 <template name="logFood">Had {{label}}</template>
-
 <template name="logSleep">
     {{#if end}} {{> logSleepClosed}} {{else}} {{> logSleepOpen}} {{/if}}
 </template>
-
 <template name="logSleepOpen">Fell asleep</template>
-
 <template name="logSleepClosed">Slept for {{duration}} hours (until {{end}})</template>
-
 <template name="logNap">
     {{#if end}} {{> logNapClosed}} {{else}} {{> logNapOpen}} {{/if}}
 </template>
-
 <template name="logNapOpen">Gone for a nap</template>
-
 <template name="logNapClosed">Napped for {{duration}} (until {{end}})</template>

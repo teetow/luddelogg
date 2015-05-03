@@ -1,14 +1,19 @@
 Template.lastlog.onCreated(function() {
-    this.subscribe("logRecent");
+    var instance = this;
+    instance.recentEvents = function() {
+        return getToday(EventLog);
+    };
+    instance.subscribe("logToday");
 });
 Template.lastlog.helpers({
-    logentries: function() {
-        return EventLog.find({}, {
-            sort: {
-                timestamp: -1
-            },
-            limit: 50
-        }).fetch();
+    logEntryGroups: function() {
+        var logEntries = Template.instance().recentEvents().fetch();
+        var groupedEntries = [];
+        $.each(_.groupBy(logEntries, "date"), function(date, entries) {
+            groupedEntries.push({date: date, logentries: entries});
+        });
+
+        return groupedEntries;
     },
     logEntryTemplate: function() {
         switch (this.activity) {
@@ -25,7 +30,7 @@ Template.lastlog.helpers({
         var eventlabelwords = this.label.split(" ");
         eventlabelwords.forEach(function(word, wordindex, wordarray) {
             var iconentry = LogIconTable[word];
-            if (iconentry != undefined) logicons.push({
+            if (iconentry !== undefined) logicons.push({
                 iconclass: iconentry
             });
         });
