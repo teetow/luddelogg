@@ -1,11 +1,6 @@
-* {
-    box-sizing: border-box;
-}
-
 .sleepchart {
     position: relative;
     width: 100%;
-    padding: 32px;
 }
 
 .sleepchart-time {
@@ -27,13 +22,17 @@
 }
 
 .sleepchart-row.mod-weekend {
-    background-color: #f1f1f1;
+//    background-color: #e8e8e8;
 }
 
 .sleepchart-row.mod-today {
     height: 48px;
-    border: solid lightgray;
-    border-width: 1px 0 1px 0;
+    background-color: white;
+    border: 1px solid #abf;
+}
+
+.sleepchart-row.mod-weekday + .sleepchart-row.mod-weekend {
+    border-top: 1px solid lightgray;
 }
 
 .sleepchart-row.mod-weekend + .sleepchart-row.mod-weekday {

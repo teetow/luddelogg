@@ -1,56 +1,75 @@
-.lastlog {
-    display: table;
-    border-collapse: collapse;
-    padding: 24px;
+.lastlog {}
+
+.log-header {
+    padding: 12px 0;
+    color: #999;
 }
+
 .logrow {
-    display: table-row;
-    background-color: #fff;
+    height: 40px;
+    display: flex;
+    align-items: center;
 }
+
 .logrow + .logrow {
-    border-top: 1px solid #ccc;
+    border-top: 1px solid #eee;
 }
-.log-date, .log-start, .log-entry, .log-time {
-    display: table-cell;
+
+.log-start,
+.log-entry,
+.log-time {
     white-space: nowrap;
-    padding: 12px;
 }
+
+.log-time {
+    width: 64px;
+}
+
 .log-description {
     display: inline-block;
-    margin: 0 0 0 6px;
 }
+
 .logicon-base {
     display: inline-block;
-    width: 26px;
-    height: 28px;
+    width: 24px;
+    height: 24px;
     background-repeat: no-repeat;
-    background-size: 26px;
-    margin: -9px -5px;
+    background-size: 24px;
+    vertical-align: middle;
 }
+
 .logicon-food-bottle {
     background-image: url('food-bottle.svg');
 }
+
 .logicon-food-meal {
     background-image: url('food-meal.svg');
 }
+
 .logicon-food-fruit {
     background-image: url('food-fruit.svg');
 }
+
 .logicon-food-oatmeal {
     background-image: url('food-oatmeal.svg');
 }
+
 .logicon-food-sandwich {
     background-image: url('food-sandwich.svg');
 }
+
 .logicon-sleep-nap {
     background-image: url('nap.svg');
 }
+
 .logicon-sleep-night {
     background-image: url('sleep.svg');
 }
+
 .logicon-drops {
     background-image: url('drops.svg');
 }
+
 .logicon-toothbrush {
     background-image: url('toothbrush.svg');
 }
