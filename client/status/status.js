@@ -1,14 +1,15 @@
 Template.status.onCreated(function() {
     var instance = this;
+    Session.set("now", moment().toDate());
     Meteor.setInterval(function getNow() {
         Session.set("now", moment().toDate());
     }, 1000);
-    instance.subscribe("logToday", function() {
+    instance.subscribe("logToday", Session.get("now"), function() {
         instance.state = new ReactiveVar();
         instance.state.set(getState(instance.todayEvents()));
     });
     instance.todayEvents = function() {
-        return getToday(EventLog);
+        return getToday(EventLog, Session.get("now"));
     };
 });
 Template.status.onDestroyed(function() {

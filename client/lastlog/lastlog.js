@@ -3,7 +3,7 @@ Template.lastlog.onCreated(function() {
     instance.recentEvents = function() {
         return getToday(EventLog);
     };
-    instance.subscribe("logToday");
+    instance.subscribe("logToday", moment().toDate());
 });
 Template.lastlog.helpers({
     logEntryGroups: function() {
