@@ -1,6 +1,5 @@
 Template.status.onCreated(function() {
     var instance = this;
-    Session.set("now", moment().toDate());
     Meteor.setInterval(function getNow() {
         Session.set("now", moment().toDate());
     }, 1000);
