@@ -1,18 +1,21 @@
 Template.status.onCreated(function() {
     var instance = this;
-    Meteor.setInterval(function getNow() {
-        Session.set("now", moment().toDate());
-    }, 1000);
-    instance.subscribe("logToday", Session.get("now"), function() {
-        instance.state = new ReactiveVar();
-        instance.state.set(getState(instance.todayEvents()));
-    });
+    instance.state = new ReactiveVar();
     instance.todayEvents = function() {
         return getToday(EventLog, Session.get("now"));
     };
+    Session.set("now", moment().toDate());
+    instance.timer = Meteor.setInterval(function() {
+        Session.set("now", moment().toDate());
+    }, 5000);
+    instance.subHandle = instance.subscribe("logToday", Session.get("now"), function() {});
+    instance.autorun(function() {
+        instance.state.set(getState(instance.todayEvents()));
+    });
 });
 Template.status.onDestroyed(function() {
-    Meteor.clearInterval(getNow);
+    var instance = this;
+    Meteor.clearInterval(instance.timer);
 });
 
 function getState(todayCollection) {
