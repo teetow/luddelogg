@@ -4,11 +4,10 @@ Template.status.onCreated(function() {
     instance.todayEvents = function() {
         return getToday(EventLog, Session.get("now"));
     };
-    Session.set("now", moment().toDate());
     instance.timer = Meteor.setInterval(function() {
         Session.set("now", moment().toDate());
-    }, 5000);
-    instance.subHandle = instance.subscribe("logToday", Session.get("now"), function() {});
+    }, 1000);
+     instance.subscribe("logToday", Session.get("now"));
     instance.autorun(function() {
         instance.state.set(getState(instance.todayEvents()));
     });
