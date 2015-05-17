@@ -1,9 +1,5 @@
 .status {
-    display: flex;
-    flex-flow: column nowrap;
-    background-color: white;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-    padding: 12px;
+    /**/
 }
 
 .status-currentstate {
@@ -29,11 +25,6 @@
     background-image: url('state-asleep.svg');
 }
 
-.statetext-large {
-    font-size: 1.4em;
-    font-weight: 300;
-}
-
 .status-stats {
     display: flex;
     flex-flow: row nowrap;
@@ -51,4 +42,15 @@
 
 .stats-box-right {
     align-items: flex-end;
+}
+
+.status-foodicon {
+    display: inline-block;
+    position: relative;
+    top: 2px;
+    width: 18px;
+    height: 18px;
+    background-repeat: no-repeat;
+    background-size: 20px;
+    filter: grayscale(100%);
 }

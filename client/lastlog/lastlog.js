@@ -10,9 +10,14 @@ Template.lastlog.helpers({
         var logEntries = Template.instance().recentEvents().fetch();
         var groupedEntries = [];
         $.each(_.groupBy(logEntries, "date"), function(date, entries) {
-            groupedEntries.push({date: date, logentries: entries});
+            var fmtDate = moment(date).format("MMMM Do YYYY");
+            var fmtWeekday = moment(date).format("dddd");
+            groupedEntries.push({
+                date: fmtDate,
+                dateWeekday: fmtWeekday,
+                logentries: entries
+            });
         });
-
         return groupedEntries;
     },
     logEntryTemplate: function() {

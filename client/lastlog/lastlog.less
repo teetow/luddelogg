@@ -1,9 +1,17 @@
-.lastlog {}
-
-.log-header {
-    padding: 12px 0;
-    color: #999;
+.logday-header {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    align-items: center;
 }
+
+.logday + .logday .logday-header {
+    margin-top: 12px;
+}
+
+.log-header-weekday {}
+
+.log-header-date {}
 
 .logrow {
     height: 32px;
@@ -31,7 +39,7 @@
 
 .logicon-base {
     display: inline-block;
-    width: 24px;
+    width: 32px;
     height: 24px;
     background-repeat: no-repeat;
     background-size: 24px;

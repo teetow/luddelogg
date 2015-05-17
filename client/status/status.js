@@ -7,7 +7,7 @@ Template.status.onCreated(function() {
     instance.timer = Meteor.setInterval(function() {
         Session.set("now", moment().toDate());
     }, 1000);
-     instance.subscribe("logToday", Session.get("now"));
+    instance.subscribe("logToday", Session.get("now"));
     instance.autorun(function() {
         instance.state.set(getState(instance.todayEvents()));
     });
@@ -74,11 +74,10 @@ Template.status.helpers({
     },
     stateText: function() {
         var state = Template.instance().state.get();
-        if (state)
-        {
+        if (state) {
             var outputText;
             if (state.lastState == "awake") outputText = "Ludvig is awake!";
-            else outputText = "Ludvig is asleep.";
+            else outputText = "Ludvig is asleep";
             return outputText;
         }
     },
@@ -100,15 +99,24 @@ Template.status.helpers({
     },
     totalSleep: function() {
         var state = Template.instance().state.get();
-        if (state && state.totalSleep) return "Slept " + moment.utc(state.totalSleep).format("HH:mm") + " today";
+        if (state && state.totalSleep) return "Slept " + makeDuration(state.totalSleep) + " today";
     },
     totalFood: function() {
         var state = Template.instance().state.get();
         if (state && state.totalSleep) return "Eaten " + state.foodEvents.length + " times";
     },
+    lastFoodIconClass: function() {
+        var state = Template.instance().state.get();
+        if (state && state.lastFood) {
+            var iconClass = LogIconTable[state.lastFood.label];
+            return iconClass;
+        }
+    },
     lastFood: function() {
         var state = Template.instance().state.get();
-        if (state && state.lastFood) return "Last ate " + moment.utc(state.lastFood.timestamp).from(Session.get('now'));
+        if (state && state.lastFood) {
+            return moment.utc(state.lastFood.timestamp).from(Session.get('now'));
+        }
     },
     foodIcons: function() {
         var state = Template.instance().state.get();

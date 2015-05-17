@@ -1,20 +1,22 @@
 <template name="lastlog">
-    <h3>Lastlog</h3>
     {{#if Template.subscriptionsReady}}
     <div class="lastlog">
         {{#each logEntryGroups}}
         <div class="logday">
-            <div class="log-header">{{date}}</div>
+            <div class="logday-header">
+                <h3 class="log-header-weekday"> {{dateWeekday}} </h3>
+                <h4 class="log-header-date"> {{date}} </h4>
+            </div>
             {{#each logentries}}
             <div class="logrow">
-                <div class="log-time">{{time}}</div>
+                <p class="log-time">{{time}}</p>
                 <div class="log-entry">
                     {{#each logicons}}
                     <div class="logicon-base {{iconclass}}"></div>
                     {{/each}}
-                    <div class="log-description">
+                    <p class="log-description">
                         {{> Template.dynamic template=logEntryTemplate}}
-                    </div>
+                    </p>
                 </div>
             </div>
             {{else}}
@@ -33,9 +35,9 @@
     {{#if end}} {{> logSleepClosed}} {{else}} {{> logSleepOpen}} {{/if}}
 </template>
 <template name="logSleepOpen">Fell asleep</template>
-<template name="logSleepClosed">Slept for {{duration}} hours (until {{end}})</template>
+<template name="logSleepClosed">Slept {{makeDuration duration}} (until {{end}})</template>
 <template name="logNap">
     {{#if end}} {{> logNapClosed}} {{else}} {{> logNapOpen}} {{/if}}
 </template>
 <template name="logNapOpen">Gone for a nap</template>
-<template name="logNapClosed">Napped for {{duration}} (until {{end}})</template>
+<template name="logNapClosed">Napped {{makeDuration duration}} (until {{end}})</template>
