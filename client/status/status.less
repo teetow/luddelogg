@@ -1,25 +1,54 @@
 .status {
     display: flex;
-    flex-flow: row wrap;
-    justify-content: space-around;
-    align-items: stretch;
+    flex-flow: column nowrap;
+    background-color: white;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+    padding: 12px;
 }
-.status-box {
-    display: inline-flex;
-    flex-direction: column;
+
+.status-currentstate {
+    display: flex;
+    flex-flow: column nowrap;
     align-items: center;
     flex: 0 0 auto;
     margin: 0 0 24px;
 }
+
 .status-state-icon {
     width: 80px;
     height: 80px;
     background-repeat: no-repeat;
     background-size: 80px;
 }
+
 .status-state-icon-awake {
     background-image: url('state-awake.svg');
 }
+
 .status-state-icon-asleep {
     background-image: url('state-asleep.svg');
+}
+
+.statetext-large {
+    font-size: 1.4em;
+    font-weight: 300;
+}
+
+.status-stats {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+}
+
+.status-stats-box {
+    display: flex;
+    flex-flow: column nowrap;
+}
+
+.stats-box-left {
+    align-items: flex-start;
+}
+
+.stats-box-right {
+    align-items: flex-end;
 }

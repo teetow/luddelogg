@@ -74,6 +74,16 @@ Template.status.helpers({
     },
     stateText: function() {
         var state = Template.instance().state.get();
+        if (state)
+        {
+            var outputText;
+            if (state.lastState == "awake") outputText = "Ludvig is awake!";
+            else outputText = "Ludvig is asleep.";
+            return outputText;
+        }
+    },
+    stateTextTransition: function() {
+        var state = Template.instance().state.get();
         if (state) {
             var outputText;
             if (state.lastState == "awake") outputText = "Awake since ";

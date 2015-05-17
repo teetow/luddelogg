@@ -1,21 +1,20 @@
 <template name="status">
-    <h3>Status</h3>
     {{#if Template.subscriptionsReady}}
     <div class="status">
-        <div class="status-box">
+        <div class="status-currentstate">
+            <div class="status-state-text statetext-large"> {{stateText}} </div>
             <div class="status-state-icon {{stateIconClass}}"></div>
-            <div class="status-state-text"> {{stateText}} </div>
-            <div class="status-state-text"> {{stateTextTimer}} </div>
-            <div class="status-state-text"> {{totalSleep}} </div>
+            <div class="status-state-text statetext-large"> {{stateTextTimer}} </div>
         </div>
-        <div class="status-box">
-            <div class="status-foodinfo-foodicons">
-                {{#each foodIcons}}
-                <div class="logicon-base {{iconclass}}"></div>
-                {{/each}}
+        <div class="status-stats">
+            <div class="status-stats-box stats-box-left">
+                <div class="status-stat-text"> {{stateTextTransition}} </div>
+                <div class="status-stat-text"> {{totalSleep}} </div>
             </div>
-            <div class="status-foodinfo-totalfood">{{totalFood}}</div>
-            <div class="status-foodinfo-lastate">{{lastFood}}</div>
+            <div class="status-stats-box stats-box-right">
+                <div class="status-stat-text"> {{lastFood}} </div>
+                <div class="status-stat-text"> {{totalFood}} </div>
+            </div>
         </div>
     </div>
     {{else}}
