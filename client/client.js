@@ -9,9 +9,6 @@ LogIconTable = {
     drops: "logicon-drops",
     toothbrush: "logicon-toothbrush",
 };
-Meteor.startup(function() {
-    loadGoogleFonts();
-});
 InputReady = new ReactiveVar(false);
 Template.registerHelper("makeDuration", function(duration) {
     return makeDuration(duration);
@@ -20,16 +17,7 @@ Router.map(function() {
     this.route("/", function() {
         this.render('dashboard');
     });
-    this.route('dashboard', {
-        waitOn: function() {
-            return IRLibLoader.load('https://www.google.com/jsapi', {
-                success: function() {
-                    console.log('API loaded.');
-                    loadChartPackages(["timeline"]);
-                }
-            });
-        }
-    });
+    this.route('dashboard');
     this.route('sleep', {
         waitOn: function() {
             return IRLibLoader.load('https://www.google.com/jsapi', {
