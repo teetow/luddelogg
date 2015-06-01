@@ -87,13 +87,15 @@ function syncFromSheet(err, rows, info) {
     var data = _.values(rows);
     data.forEach(function(rowitem, rowindex, rowarray) {
         var rowObject = {
-            activity: rowitem[1],
-            label: rowitem[2],
-            time: rowitem[3],
-            end: rowitem[4],
-            date: rowitem[5],
-            timestamp: rowitem[6],
-            endtimestamp: rowitem[7],
+            time:           rowitem[1],
+            end:            rowitem[2],
+            activity:       rowitem[3],
+            label:          rowitem[4],
+            amount:         rowitem[5],
+            score:          rowitem[6],
+            date:           rowitem[7],
+            timestamp:      rowitem[8],
+            endtimestamp:   rowitem[9],
         };
         // skip on incomplete data
         if (!rowObject.activity || !rowObject.time || !rowObject.date) return;
