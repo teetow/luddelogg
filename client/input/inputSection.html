@@ -1,0 +1,8 @@
+<template name="inputSection">
+    <div class="input-section-choices">
+        {{#each choices}}
+        <button class="ui-button {{#if isActiveChoice}}mod-active{{/if}} js-action {{../propValue}}">{{propLabel}}</button>
+        {{/each}}
+    </div>
+    {{#if hasValue}} {{> inputSection subChoices}} {{/if}}
+</template>

@@ -1,14 +1,15 @@
 <template name="input">
-    <h2>Input</h2>
-    {{> inputbuttons}}
-</template>
-
-<template name="inputbuttons">
-    {{#if sheetReady}}
-    <button class="input-button js-button-sleep">Sleep</button>
-    <button class="input-button js-button-food">Food</button>
+    {{#if sheetReady.get}}
+    <div class="input-section ui-card">
+        <h4>Add an event:</h4>
+        <div class="input-choices">
+        	{{> inputSection selectionTree}}
+        </div>
+        <div class="input-actions">
+		    <button class="ui-button mod-spaceleft js-cancel">Cancel</button>
+		    <button class="ui-button {{#if hasEnoughData}}mod-active{{/if}} js-done">Done</button>
+	    </div>
+    </div>
     {{else}}
-    <button class="input-button mod-disabled">Sleep</button>
-    <button class="input-button mod-disabled">Food</button>
-    {{/if}}
+    <h3>Loading...</h3> {{/if}}
 </template>

@@ -1,14 +1,7 @@
 @import url(http://fonts.googleapis.com/css?family=Roboto:300,400);
-.ui-card {
-    display: flex;
-    flex-flow: column nowrap;
-    background-color: white;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-    padding: 24px;
-    margin: 24px;
-    min-width: 400px;
-}
-
+@color-blue: hsla(200, 85%, 50%, 100%);
+@color-blue-active: hsla(200, 90%, 40%, 100%);
+@color-transparent: hsla(200, 0%, 100%, 0%);
 h1,
 h2,
 h3,
@@ -25,4 +18,61 @@ h6 {
         padding: 12px;
         margin: 12px;
     }
+}
+
+.ui-card {
+    display: flex;
+    flex-flow: column nowrap;
+    background-color: white;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+    padding: 24px;
+    margin: 24px;
+    min-width: 400px;
+}
+
+.ui-button {
+    cursor: pointer;
+    padding: 12px 18px;
+    border: 1px solid @color-transparent;
+    background-color: @color-transparent;
+    font-size: 1.3em;
+    outline: none;
+    box-shadow: 0 0 0 2px @color-blue;
+    color: @color-blue;
+    border-radius: 2px;
+    text-transform: uppercase;
+}
+
+.ui-button.mod-tapped,
+.ui-button:hover {
+    background-color: fade(@color-blue-active, 5%);
+    box-shadow: 0 0 0 2px @color-blue-active;
+    color: @color-blue-active;
+}
+
+.ui-button + .ui-button {
+    margin-left: 24px;
+}
+
+.ui-button.mod-active {
+    background-color: @color-blue;
+    color: white;
+}
+
+.ui-button.mod-active.mod-tapped,
+.ui-button.mod-active:hover {
+    background-color: @color-blue-active;
+}
+
+.ui-button.mod-disabled {
+    background-color: #999;
+}
+
+.ui-button.mod-spaceleft {
+    margin-left: auto;
+}
+
+.ui-button-label {
+    padding: 12px 0;
+    margin-right: auto;
 }
