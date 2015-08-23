@@ -35,6 +35,43 @@ Router.map(function() {
     this.route('status');
 });
 
+Meteor.methods({
+    dbLoadSheet: function() {
+    },
+    dbStartSyncSheet: function() {
+    },
+    dbStopSyncSheet: function() {
+    },
+    dbIsSyncing: function() {
+    },
+    dbClearData: function() {
+        EventLog.remove({});
+    },
+    dbGetData: function() {
+    },
+    dbAddEntry: function(newLogInfo) {
+        // not enabled yet
+        /*
+                if (!sheetHandle)
+                    throw "Cannot sync to sheet -- sheet not loaded.";
+                sheetHandle.metadata(function(err, metadata) {
+                    if (err) throw err;
+
+                    var newLogEntry = {
+                        1: newLogInfo.activity, //activity
+                        2: newLogInfo.label, // label
+                        3: moment().format("HH:mm:ss"), // start
+                        4: newLogInfo.end ? newLogInfo.end : "", // end
+                        5: moment().format("YYYY-MM-DD") // date
+                    };
+
+                    sendLogEntry(metadata.rowCount + 1, newLogEntry);
+                });
+        */
+    },
+});
+
+
 function loadChartPackages(packages) {
         Session.set('googleLoaded', false);
         google.load('visualization', '1', {

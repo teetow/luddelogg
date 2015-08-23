@@ -2,6 +2,7 @@
     <h3>Database</h3>
     {{#if Template.subscriptionsReady}}
         {{> dbOps}}
+        {{> dbInfo}}
 	    {{> dbLog}}
     {{else}}
     <div>Waiting for data...</div>
@@ -9,8 +10,15 @@
 </template>
 
 <template name="dbOps">
+    <button class="button-clear">Clear data</button>
     <button class="button-syncnow">Sync now</button>
-    <button class="button-reinit">Reinitialize from Google Sheet</button>
+</template>
+
+<template name="dbInfo">
+    <div class="db-info">
+        <div class="db-info-sheetrows">Sheetdata: {{numSheetRows}} rows</div>
+        <div class="db-info-eventrows">Eventlog: {{numEventRows}} rows</div>
+    </div>
 </template>
 
 <template name="dbLog">
@@ -21,14 +29,15 @@
 
 <template name="dbLogEntry">
     <div class="db-log-row">
-        <div class="db-log-row-cell">d: {{date}}</div>
+        <div class="db-log-row-cell">date: {{date}}</div>
         <div class="db-log-row-cell">a: {{activity}}</div>
         <div class="db-log-row-cell">l: {{label}}</div>
         <div class="db-log-row-cell">t: {{time}}</div>
         <div class="db-log-row-cell">e: {{end}}</div>
-        <div class="db-log-row-cell">d: {{duration}}</div>
-        <div class="db-log-row-cell">ts: {{timestamp}}</div>
-        <div class="db-log-row-cell">ets: {{endtimestamp}}</div>
+        <div class="db-log-row-cell">dur: {{duration}}</div>
+        <div class="db-log-row-cell">ts: {{prettyDate timestamp}}</div>
+        <div class="db-log-row-cell">ets: {{prettyDate endtimestamp}}</div>
         <div class="db-log-row-cell">tsf: {{timestampformatted}}</div>
+        <div class="db-log-row-cell">id: {{id}}</div>
     </div>
 </template>
