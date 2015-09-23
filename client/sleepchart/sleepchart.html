@@ -17,7 +17,7 @@
 </template>
 <template name="sleepchartRow">
     <div class="sleepchart-row {{weekendclass}} {{todayclass}}">
-        <div class="sleepchart-row-header">{{date}}</div>
+        <div class="sleepchart-row-header">{{shortdate date}}</div>
         <div class="sleepchart-row-events">
             {{#each sleepchartEvents}}
                 {{> Template.dynamic template=sleepchartEventTemplate}}

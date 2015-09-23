@@ -1,4 +1,8 @@
 Template.sleepchartRow.helpers({
+    shortdate: function(date) {
+        var date = moment(date, "YYYY-MM-DD");
+        return date.format("ddd DD");
+    },
     weekendclass: function() {
         var ts = moment(this.date, "YYYY-MM-DD");
         if (ts.day() === 0 || ts.day() === 6) {
