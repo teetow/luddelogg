@@ -2,6 +2,15 @@
 @color-blue: hsla(200, 85%, 50%, 100%);
 @color-blue-active: hsla(200, 90%, 40%, 100%);
 @color-transparent: hsla(200, 0%, 100%, 0%);
+body {
+    color: #333;
+    background-color: #f1f1f1;
+    font-family: Roboto, sans serif;
+    font-size: 16px;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
 h1,
 h2,
 h3,
@@ -10,14 +19,6 @@ h5,
 h6 {
     margin: 0;
     padding: 0;
-}
-
-@media only screen and (min-device-width: 320px) and (max-device-width: 480px) and (-webkit-min-device-pixel-ratio: 2) {
-    .ui-card {
-        min-width: initial;
-        padding: 12px;
-        margin: 12px;
-    }
 }
 
 .ui-card {
@@ -75,4 +76,36 @@ h6 {
 .ui-button-label {
     padding: 12px 0;
     margin-right: auto;
+}
+
+@media only screen and (min-device-width: 320px) and (max-device-width: 375px) and (-webkit-min-device-pixel-ratio: 2) {
+    body {
+        font-size: 12px;
+        padding: 0;
+        margin: 0;
+    }
+    .ui-card {
+        min-width: initial;
+        padding: 12px;
+        margin: 12px;
+    }
+    .ui-card + .ui-card {
+        margin: 0 12px 12px;
+    }
+}
+
+@media only screen and (min-device-width: 375px) and (max-device-width: 480px) and (-webkit-min-device-pixel-ratio: 2) {
+    body {
+        font-size: 16px;
+        padding: 0;
+        margin: 0;
+    }
+    .ui-card {
+        min-width: initial;
+        padding: 18px;
+        margin: 18px;
+    }
+    .ui-card + .ui-card {
+        margin: 0 18px 18px;
+    }
 }
