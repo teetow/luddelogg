@@ -24,9 +24,11 @@
             {{/each}}
         </div>
         {{else}}
-        <div>Loading events...</div>
+        <div>No events yet</div>
         {{/each}}
     </div>
+    {{else}}
+    <div class="lastlog">Loading data...</div>
     {{/if}}
 </template>
 <template name="logDefault">Had {{label}}</template>

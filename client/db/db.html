@@ -1,11 +1,11 @@
 <template name="db">
-    <h3>Database</h3>
     {{#if Template.subscriptionsReady}}
-        {{> dbOps}}
-        {{> dbInfo}}
-	    {{> dbLog}}
+    <h3>Database</h3>
+    {{> dbOps}}
+    {{> dbInfo}}
+    {{> dbLog}}
     {{else}}
-    <div>Waiting for data...</div>
+    <h3>Waiting for data...</h3>
     {{/if}}
 </template>
 

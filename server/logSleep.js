@@ -1,4 +1,4 @@
-Meteor.reactivePublish("logSleep", function() {
+Meteor.publish("logSleep", function() {
 	return EventLog.find({
 		activity: "sleep"
 	}, {

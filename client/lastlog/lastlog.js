@@ -1,24 +1,28 @@
+function renderEntries(logEntries) {
+    var groupedEntries = [];
+    $.each(_.groupBy(logEntries, "date"), function(date, entries) {
+        var fmtDate = moment(date).format("MMMM Do YYYY");
+        var fmtWeekday = moment(date).format("dddd");
+        groupedEntries.push({
+            date: fmtDate,
+            dateWeekday: fmtWeekday,
+            logentries: entries
+        });
+    });
+    return groupedEntries;
+}
 Template.lastlog.onCreated(function() {
     var instance = this;
-    instance.recentEvents = function() {
-        return getToday(EventLog);
-    };
-    instance.subscribe("logToday", moment().toDate());
+    var logSub = instance.subscribe("logToday", moment().toDate());
 });
 Template.lastlog.helpers({
     logEntryGroups: function() {
-        var logEntries = Template.instance().recentEvents().fetch();
-        var groupedEntries = [];
-        $.each(_.groupBy(logEntries, "date"), function(date, entries) {
-            var fmtDate = moment(date).format("MMMM Do YYYY");
-            var fmtWeekday = moment(date).format("dddd");
-            groupedEntries.push({
-                date: fmtDate,
-                dateWeekday: fmtWeekday,
-                logentries: entries
-            });
-        });
-        return groupedEntries;
+        console.log("logentrygroups...");
+        console.log("event log contains " + EventLog.find().count());
+        var todayCursor = getToday(EventLog);
+        var todayLog = todayCursor.fetch();
+        var renderedEntries = renderEntries(todayLog);
+        return renderedEntries;
     },
     logEntryTemplate: function() {
         switch (this.activity) {

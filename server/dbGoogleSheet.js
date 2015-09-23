@@ -2,6 +2,7 @@ var sheetHandle;
 var sheetIsLoading;
 var sheetLoadHandle;
 var sheetPollHandle;
+var isSyncing;
 Meteor.startup(function() {
     Meteor.call("dbLoadSheet");
     Meteor.call("dbStartSyncSheet");
@@ -15,7 +16,7 @@ Meteor.methods({
     },
     dbStartSyncSheet: function() {
         if (!sheetLoadHandle) sheetLoadHandle = Meteor.setInterval(loadSheet, 3000000); // login every 50 minutes
-        if (!sheetPollHandle) sheetPollHandle = Meteor.setInterval(pollSheet, 30000); // get sheet every 30 seconds
+        if (!sheetPollHandle) sheetPollHandle = Meteor.setInterval(fetchSheetData, 30000); // get sheet every 30 seconds
     },
     dbStopSyncSheet: function() {
         if (sheetPollHandle) {
@@ -24,19 +25,19 @@ Meteor.methods({
         }
     },
     dbIsSyncing: function() {
-        if (sheetPollHandle) return true;
+        if (sheetPollHandle) {
+            return true;
+        }
         return false;
     },
     dbClearData: function() {
         EventLog.remove({});
     },
     dbGetData: function() {
-        if (!sheetHandle) Meteor.call("dbLoadSheet");
-        pollSheet();
-    },
-    dbSyncData: function() {
-        Meteor.call("dbLoadSheet");
-        pollSheet();
+        if (!sheetHandle) {
+            Meteor.call("dbLoadSheet");
+        }
+        fetchSheetData();
     },
     dbAddEntry: function(newLogInfo) {
         // not enabled yet
@@ -70,55 +71,95 @@ function loadSheet() {
             throw err;
         } else {
             sheetHandle = spreadsheet;
+            sheetIsLoading = false;
         }
     });
 }
 
-function pollSheet() {
-    if (!sheetHandle) throw "Cannot poll Google sheet -- Sheet not loaded.";
-    var syncFromSheetFunc = Meteor.wrapAsync(sheetHandle.receive, sheetHandle);
-    syncFromSheetFunc({
+function fetchSheetData() {
+    if (!sheetHandle) {
+        throw "Cannot fetch Google sheet -- Sheet not loaded.";
+    }
+    if (isSyncing) {
+        throw "Already syncing -- aborting fetch.";
+    }
+    var importSheetDataFunc = Meteor.wrapAsync(sheetHandle.receive, sheetHandle);
+    importSheetDataFunc({
         getValues: true
-    }, syncFromSheet);
+    }, importAndParseSheetData);
 }
 
-function syncFromSheet(err, rows, info) {
-    if (err) throw err;
+function importAndParseSheetData(err, row, info) {
+    importSheetData(err, row, info);
+    parseSheetData();
+}
+
+function importSheetData(err, rows, info) {
+    if (err) {
+        throw err;
+    }
+    if (isSyncing) {
+        throw "Already syncing -- aborting import.";
+    }
+    isSyncing = true;
+    SheetData.remove({});
     var data = _.values(rows);
     data.forEach(function(rowitem, rowindex, rowarray) {
         var rowObject = {
-            time:           rowitem[1],
-            end:            rowitem[2],
-            activity:       rowitem[3],
-            label:          rowitem[4],
-            amount:         rowitem[5],
-            score:          rowitem[6],
-            date:           rowitem[7],
-            timestamp:      rowitem[8],
-            endtimestamp:   rowitem[9],
+            time: rowitem[1],
+            end: rowitem[2],
+            activity: rowitem[3],
+            label: rowitem[4],
+            amount: rowitem[5],
+            score: rowitem[6],
+            date: rowitem[7],
+            timestamp: rowitem[8],
+            endtimestamp: rowitem[9],
+            id: rowitem[10],
         };
+        SheetData.insert(rowObject);
+    });
+    isSyncing = false;
+}
+
+function parseSheetData() {
+    if (isSyncing) {
+        throw "Already syncing -- aborting parse.";
+    }
+    isSyncing = true;
+    var data = SheetData.find({}, {
+        sort: {
+            id: 1
+        }
+    }).fetch();
+    data.forEach(function(rowitem, rowindex, rowarray) {
         // skip on incomplete data
-        if (!rowObject.activity || !rowObject.time || !rowObject.date) return;
+        if (!rowitem.activity || !rowitem.time || !rowitem.date) {
+            //console.log("no activity, time or date");
+            isSyncing = false;
+            return;
+        }
         // stupid validity checking
-        var dateSanityCheck = Date.parse(rowObject.timestamp);
+        var dateSanityCheck = Date.parse(rowitem.timestamp);
         if (isNaN(dateSanityCheck)) return;
-        var parsedTimestamp = moment.tz(rowObject.timestamp, "Europe/Stockholm");
+        var parsedTimestamp = moment.tz(rowitem.timestamp, "Europe/Stockholm");
         if (!parsedTimestamp.isValid()) {
             console.log(parsedTimestamp + " is an invalid timestamp.");
+            isSyncing = false;
             return;
         }
         var timestampDate = new Date(parsedTimestamp);
         var logEntry = {
-            activity: rowObject.activity,
-            label: rowObject.label,
-            time: rowObject.time,
-            end: rowObject.end,
-            date: rowObject.date,
+            activity: rowitem.activity,
+            label: rowitem.label,
+            time: rowitem.time,
+            end: rowitem.end,
+            date: rowitem.date,
             timestamp: timestampDate,
             timestampformatted: moment(timestampDate).format("ddd MMM DD, YYYY"),
         };
-        if (rowObject.endtimestamp) {
-            var parsedEndTimestamp = moment.tz(rowObject.endtimestamp, "Europe/Stockholm");
+        if (rowitem.endtimestamp) {
+            var parsedEndTimestamp = moment.tz(rowitem.endtimestamp, "Europe/Stockholm");
             if (parsedEndTimestamp.isValid()) {
                 logEntry.endtimestamp = new Date(parsedEndTimestamp);
                 logEntry.duration = moment.utc(logEntry.endtimestamp - logEntry.timestamp).format("HH:mm");
@@ -130,6 +171,81 @@ function syncFromSheet(err, rows, info) {
             upsert: true
         });
     });
+    isSyncing = false;
+    /*
+        var calendarDate, fileDate;
+        var data = SheetData.find({}, {
+            sort: {
+                id: 1
+            }
+        }).fetch();
+        data.forEach(function(rowObject, rowindex, rowarray) {
+            var prevRowObject;
+            if (rowindex >= 1) {
+                prevRowObject = rowarray[rowindex - 1];
+            }
+            if (isNaN(rowObject.id) || !rowObject.activity || !rowObject.time) { // skip on incomplete data
+                console.log("skipping", rowObject._id, "because incomplete.");
+                isSyncing = false;
+                return;
+            }
+            var timeParsed = moment.tz(rowObject.time, "HH:mm", "Europe/Stockholm");
+            var isContinuation = false;
+            if (rowObject.date) { // read date directly
+                // console.log(rowObject.id, "has a date");
+                calendarDate = moment(rowObject.date, "YYYY-MM-DD");
+                fileDate = calendarDate.clone();
+            } else { // infer from previous
+                // console.log(rowObject.id, "has no date");
+                if (calendarDate && prevRowObject.time) {
+                    prevTimeParsed = moment.tz(prevRowObject.time, "HH:mm", "Europe/Stockholm");
+                    if (timeParsed.toDate() < prevTimeParsed.toDate()) {
+                        // console.log(rowObject.id, "day skip detected");
+                        calendarDate.add(1, "day");
+                        if (rowObject.activity == "sleep") {
+                            isContinuation = true;
+                        }
+                    }
+                } else {
+                    // console.log("no calendardate or prevRowObject.time");
+                    isSyncing = false;
+                    return;
+                }
+                if (rowObject.activity == "sleep" && prevRowObject.activity && prevRowObject.activity == rowObject.activity) {
+                    isContinuation = true;
+                }
+                if (!isContinuation) {
+                    fileDate = calendarDate.clone();
+                }
+            }
+            var startTimestamp = calendarDate.clone().add(timeParsed);
+            var logEntry = {
+                activity: rowObject.activity,
+                label: rowObject.label,
+                time: rowObject.time,
+                end: rowObject.end,
+                date: fileDate.format("YYYY-MM-DD"),
+                timestamp: startTimestamp.toDate(),
+                timestampformatted: startTimestamp.format("ddd MMM DD, YYYY"),
+                id: rowObject.id,
+            };
+            if (rowObject.end) {
+                var endTimeParsed = moment.tz(rowObject.end, "HH:mm", "Europe/Stockholm");
+                var endTimestamp = calendarDate.clone().add(endTimeParsed);
+                if (endTimeParsed < timeParsed) { // after midnight
+                    endTimestamp.add(1, "day");
+                }
+                logEntry.endtimestamp = endTimestamp.toDate();
+                logEntry.duration = moment.utc(endTimestamp - startTimestamp).format("HH:mm");
+            }
+            EventLog.upsert({
+                timestamp: logEntry.timestamp
+            }, logEntry, {
+                upsert: true
+            });
+        });
+        isSyncing = false;
+        */
 }
 
 function sendLogEntry(row, newLogEntry) {

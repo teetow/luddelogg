@@ -1,5 +1,11 @@
+var pageSize = 10;
 Template.db.onCreated(function() {
-    this.subscribe("dbEventLog");
+    var instance = this;
+    this.eventFetchLimit = new ReactiveVar(pageSize);
+    this.autorun(function() {
+        instance.subscribe("sheetDataCount", function() {});
+        instance.subscribe("dbEventLog", instance.eventFetchLimit.get(), function() {});
+    });
 });
 Template.dbOps.events({
     'click .button-syncnow': function() {
@@ -11,11 +17,7 @@ Template.dbOps.events({
 });
 Template.dbLog.helpers({
     dbLogEntries: function() {
-        return EventLog.find({}, {
-            sort: {
-                id: -1
-            }
-        });
+        return EventLog.find({});
     },
 });
 Template.dbLogEntry.helpers({
@@ -26,7 +28,7 @@ Template.dbLogEntry.helpers({
 });
 Template.dbInfo.helpers({
     numSheetRows: function() {
-        return SheetData.find().count();
+        return Counts.get("sheetData");
     },
     numEventRows: function() {
         return EventLog.find().count();

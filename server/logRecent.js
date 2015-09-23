@@ -1,3 +1,3 @@
-Meteor.reactivePublish("logRecent", function() {
+Meteor.publish("logRecent", function() {
 	return getRecent(EventLog);
 });
