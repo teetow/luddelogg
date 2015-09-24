@@ -37,7 +37,11 @@ Meteor.methods({
         if (!sheetHandle) {
             Meteor.call("dbLoadSheet");
         }
-        fetchSheetData();
+        try {
+            fetchSheetData();
+        } catch (err) {
+            throw new Meteor.Error("404", err);
+        }
     },
     dbAddEntry: function(newLogInfo) {
         // not enabled yet

@@ -32,16 +32,24 @@ h6 {
 }
 
 .ui-button {
+    padding: 6px 9px;
+    font-size: 1.0em;
     cursor: pointer;
-    padding: 12px 18px;
     border: 1px solid @color-transparent;
     background-color: @color-transparent;
-    font-size: 1.3em;
     outline: none;
     box-shadow: 0 0 0 2px @color-blue;
     color: @color-blue;
     border-radius: 2px;
     text-transform: uppercase;
+    user-select: none;
+}
+
+.ui-button-large {
+    padding: 12px 18px;
+    font-size: 1.3em;
+
+    .ui-button;
 }
 
 .ui-button.mod-tapped,
@@ -55,6 +63,7 @@ h6 {
     margin-left: 24px;
 }
 
+.ui-button:active,
 .ui-button.mod-active {
     background-color: @color-blue;
     color: white;

@@ -5,3 +5,6 @@ Meteor.publish("dbEventLog", function(limit) {
 		limit: limit
 	});
 });
+Meteor.publish('eventLogCount', function() {
+	Counts.publish(this, 'eventLog', EventLog.find());
+});

@@ -1,10 +1,35 @@
+.db-actions {
+    padding: 12px;
+    display: flex;
+    flex-flow: row nowrap;
+}
+
+.db-info {
+    padding: 12px;
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: flex-start;
+}
+
+.db-info-message {
+    color: red;
+    transition: all 0.2s cubic-bezier(1, 2.5, 0.7, 0.7);
+}
+
+.db-info-message.animate {
+    opacity: 0.0;
+    transform: scale(0.4);
+}
+
 .db-log {
     display: table;
     font-size: 11px;
 }
+
 .db-log-row {
     display: table-row;
 }
+
 .db-log-row-cell {
     display: table-cell;
     padding: 12px;

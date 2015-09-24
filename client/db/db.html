@@ -1,24 +1,23 @@
 <template name="db">
     {{#if Template.subscriptionsReady}}
     <h3>Database</h3>
-    {{> dbOps}}
-    {{> dbInfo}}
+    <div class="db-actions">
+        <div class="ui-button js-clear">Clear data</div>
+        <div class="ui-button js-syncnow">Sync now</div>
+    </div>
+    <div class="db-info">
+        {{#if errorMessage}}
+        {{#Animate}}
+        <div class="db-info-message animate">{{errorMessage}}</div>
+        {{/Animate}}
+        {{/if}}
+        <div class="db-info-sheetrows">Sheetdata: {{numSheetRows}} rows</div>
+        <div class="db-info-eventrows">Eventlog: {{numEventRows}} rows ({{numEventRowsShown}} shown)</div>
+    </div>
     {{> dbLog}}
     {{else}}
     <h3>Waiting for data...</h3>
     {{/if}}
-</template>
-
-<template name="dbOps">
-    <button class="button-clear">Clear data</button>
-    <button class="button-syncnow">Sync now</button>
-</template>
-
-<template name="dbInfo">
-    <div class="db-info">
-        <div class="db-info-sheetrows">Sheetdata: {{numSheetRows}} rows</div>
-        <div class="db-info-eventrows">Eventlog: {{numEventRows}} rows</div>
-    </div>
 </template>
 
 <template name="dbLog">
