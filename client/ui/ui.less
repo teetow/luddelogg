@@ -1,4 +1,5 @@
 @import url(http://fonts.googleapis.com/css?family=Roboto:300,400);
+@color-accentgrey: hsl(210, 5%, 95%);
 @color-blue: hsla(200, 85%, 50%, 100%);
 @color-blue-active: hsla(200, 90%, 40%, 100%);
 @color-transparent: hsla(200, 0%, 100%, 0%);
@@ -31,6 +32,21 @@ h6 {
     min-width: 400px;
 }
 
+.ui-paneview {
+    display: flex;
+    flex-flow: row nowrap;
+}
+
+.ui-pane {
+    display: flex;
+    flex-flow: column nowrap;
+    flex: 1 1 auto;
+}
+
+.ui-pane + .ui-pane {
+    padding-left: 24px;
+    border-left: 2px dashed @color-accentgrey;
+}
 .ui-button {
     padding: 6px 9px;
     font-size: 1.0em;
@@ -46,10 +62,16 @@ h6 {
 }
 
 .ui-button-large {
+    .ui-button;
     padding: 12px 18px;
     font-size: 1.3em;
+}
 
-    .ui-button;
+.ui-button-tiny {
+    box-shadow: 0 2px 0 0 @color-blue;
+    text-transform: initial;
+    padding: 3px 6px;
+    font-size: 0.9em;
 }
 
 .ui-button.mod-tapped,

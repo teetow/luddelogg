@@ -34,21 +34,21 @@ Router.map(function() {
     this.route('db');
     this.route('status');
 });
-
 Meteor.methods({
-    dbLoadSheet: function() {
+    addMessage: function(message) {
+        AddMessage(message, "addMessage Meteor method");
     },
-    dbStartSyncSheet: function() {
+    clearMessages: function() {
+//        MessageLog.remove({});
     },
-    dbStopSyncSheet: function() {
-    },
-    dbIsSyncing: function() {
-    },
+    dbLoadSheet: function() {},
+    dbStartSyncSheet: function() {},
+    dbStopSyncSheet: function() {},
+    dbIsSyncing: function() {},
     dbClearData: function() {
         EventLog.remove({});
     },
-    dbGetData: function() {
-    },
+    dbGetData: function() {},
     dbAddEntry: function(newLogInfo) {
         // not enabled yet
         /*
@@ -71,19 +71,18 @@ Meteor.methods({
     },
 });
 
-
 function loadChartPackages(packages) {
-        Session.set('googleLoaded', false);
-        google.load('visualization', '1', {
-            packages: packages,
-            callback: function() {
-                var s = (packages.length > 1) ? "s" : "";
-                console.log("package" + s + " loaded: " + packages.toString());
-                Session.set('googleLoaded', true);
-            }
-        });
-    }
-    // extend Blaze.View prototype to mimick jQuery's closest for views
+    Session.set('googleLoaded', false);
+    google.load('visualization', '1', {
+        packages: packages,
+        callback: function() {
+            var s = (packages.length > 1) ? "s" : "";
+            console.log("package" + s + " loaded: " + packages.toString());
+            Session.set('googleLoaded', true);
+        }
+    });
+}
+// extend Blaze.View prototype to mimick jQuery's closest for views
 _.extend(Blaze.View.prototype, {
     closest: function(viewName) {
         var view = this;
@@ -102,4 +101,8 @@ _.extend(Blaze.TemplateInstance.prototype, {
         var view = this.view.closest(viewName);
         return view ? view.templateInstance() : null;
     }
+});
+Template.registerHelper("prettyDate", function(date) {
+    if (!date) return "";
+    return moment(date).format("YYYY-MM-DD HH:mm:ss");
 });

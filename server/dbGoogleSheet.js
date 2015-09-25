@@ -4,21 +4,25 @@ var sheetLoadHandle;
 var sheetPollHandle;
 var isSyncing;
 Meteor.startup(function() {
+    ClearMessages();
     Meteor.call("dbLoadSheet");
     Meteor.call("dbStartSyncSheet");
 });
 Meteor.methods({
     dbLoadSheet: function() {
+        AddMessage("loading sheet...", "dbLoadSheet");
         loadSheet();
     },
     IsSheetReady: function() {
         return (sheetHandle === undefined);
     },
     dbStartSyncSheet: function() {
+        AddMessage("Starting sync...", "dbStartSyncSheet");
         if (!sheetLoadHandle) sheetLoadHandle = Meteor.setInterval(loadSheet, 3000000); // login every 50 minutes
         if (!sheetPollHandle) sheetPollHandle = Meteor.setInterval(fetchSheetData, 30000); // get sheet every 30 seconds
     },
     dbStopSyncSheet: function() {
+        AddMessage("Stopping sync...", "dbStopSyncSheet");
         if (sheetPollHandle) {
             Meteor.clearInterval(sheetPollHandle);
             sheetPollHandle = undefined;
@@ -31,16 +35,19 @@ Meteor.methods({
         return false;
     },
     dbClearData: function() {
+        AddMessage("Clearing eventlog.", "dbClearData");
         EventLog.remove({});
     },
     dbGetData: function() {
         if (!sheetHandle) {
+            AddMessage("Loading sheet before getting data.", "dbGetData");
             Meteor.call("dbLoadSheet");
         }
         try {
+            AddMessage("Getting sheet data...", "dbGetData");
             fetchSheetData();
         } catch (err) {
-            throw new Meteor.Error("404", err);
+            AddMessage(err, "dbGetData");
         }
     },
     dbAddEntry: function(newLogInfo) {
@@ -72,8 +79,10 @@ function loadSheet() {
     var spreadsheetLoader = Meteor.wrapAsync(spreadsheet.load, spreadsheet);
     spreadsheetLoader(spreadsheetLoaderOptions, function(err, spreadsheet) {
         if (err) {
+            AddMessage(err, "loadSheet");
             throw err;
         } else {
+            AddMessage("sheet loaded.", "loadSheet");
             sheetHandle = spreadsheet;
             sheetIsLoading = false;
         }
@@ -100,15 +109,22 @@ function importAndParseSheetData(err, row, info) {
 
 function importSheetData(err, rows, info) {
     if (err) {
+        AddMessage(err, "importSheetData");
         throw err;
     }
     if (isSyncing) {
+        AddMessage("Aborted import -- already syncing.", "importSheetData");
         throw "Already syncing -- aborting import.";
     }
     isSyncing = true;
     SheetData.remove({});
     var data = _.values(rows);
+    var numRows = data.length;
     data.forEach(function(rowitem, rowindex, rowarray) {
+        var numRowsImported = rowindex + 1;
+        if (numRowsImported % 250 == 0 || numRowsImported == numRows) {
+            AddMessage("Imported " + (numRowsImported) + " of " + numRows + " rows.", "importSheetData");
+        }
         var rowObject = {
             time: rowitem[1],
             end: rowitem[2],
@@ -128,6 +144,7 @@ function importSheetData(err, rows, info) {
 
 function parseSheetData() {
     if (isSyncing) {
+        AddMessage("Aborted parse -- already syncing.", "parseSheetData");
         throw "Already syncing -- aborting parse.";
     }
     isSyncing = true;
@@ -136,10 +153,14 @@ function parseSheetData() {
             id: 1
         }
     }).fetch();
+    var numRows = data.length;
     data.forEach(function(rowitem, rowindex, rowarray) {
+        var numRowsImported = rowindex + 1;
+        if (numRowsImported % 250 == 0 || numRowsImported == numRows) {
+            AddMessage("Processed " + numRowsImported + " of " + numRows + " rows.", "parseSheetData");
+        }
         // skip on incomplete data
         if (!rowitem.activity || !rowitem.time || !rowitem.date) {
-            //console.log("no activity, time or date");
             isSyncing = false;
             return;
         }
@@ -148,7 +169,7 @@ function parseSheetData() {
         if (isNaN(dateSanityCheck)) return;
         var parsedTimestamp = moment.tz(rowitem.timestamp, "Europe/Stockholm");
         if (!parsedTimestamp.isValid()) {
-            console.log(parsedTimestamp + " is an invalid timestamp.");
+            AddMessage("Skipped row " + rowitem.id + " -- " + parsedTimestamp + " is an invalid timestamp.", "parseSheetData");
             isSyncing = false;
             return;
         }
@@ -161,6 +182,7 @@ function parseSheetData() {
             date: rowitem.date,
             timestamp: timestampDate,
             timestampformatted: moment(timestampDate).format("ddd MMM DD, YYYY"),
+            id: rowitem.id,
         };
         if (rowitem.endtimestamp) {
             var parsedEndTimestamp = moment.tz(rowitem.endtimestamp, "Europe/Stockholm");
@@ -176,80 +198,7 @@ function parseSheetData() {
         });
     });
     isSyncing = false;
-    /*
-        var calendarDate, fileDate;
-        var data = SheetData.find({}, {
-            sort: {
-                id: 1
-            }
-        }).fetch();
-        data.forEach(function(rowObject, rowindex, rowarray) {
-            var prevRowObject;
-            if (rowindex >= 1) {
-                prevRowObject = rowarray[rowindex - 1];
-            }
-            if (isNaN(rowObject.id) || !rowObject.activity || !rowObject.time) { // skip on incomplete data
-                console.log("skipping", rowObject._id, "because incomplete.");
-                isSyncing = false;
-                return;
-            }
-            var timeParsed = moment.tz(rowObject.time, "HH:mm", "Europe/Stockholm");
-            var isContinuation = false;
-            if (rowObject.date) { // read date directly
-                // console.log(rowObject.id, "has a date");
-                calendarDate = moment(rowObject.date, "YYYY-MM-DD");
-                fileDate = calendarDate.clone();
-            } else { // infer from previous
-                // console.log(rowObject.id, "has no date");
-                if (calendarDate && prevRowObject.time) {
-                    prevTimeParsed = moment.tz(prevRowObject.time, "HH:mm", "Europe/Stockholm");
-                    if (timeParsed.toDate() < prevTimeParsed.toDate()) {
-                        // console.log(rowObject.id, "day skip detected");
-                        calendarDate.add(1, "day");
-                        if (rowObject.activity == "sleep") {
-                            isContinuation = true;
-                        }
-                    }
-                } else {
-                    // console.log("no calendardate or prevRowObject.time");
-                    isSyncing = false;
-                    return;
-                }
-                if (rowObject.activity == "sleep" && prevRowObject.activity && prevRowObject.activity == rowObject.activity) {
-                    isContinuation = true;
-                }
-                if (!isContinuation) {
-                    fileDate = calendarDate.clone();
-                }
-            }
-            var startTimestamp = calendarDate.clone().add(timeParsed);
-            var logEntry = {
-                activity: rowObject.activity,
-                label: rowObject.label,
-                time: rowObject.time,
-                end: rowObject.end,
-                date: fileDate.format("YYYY-MM-DD"),
-                timestamp: startTimestamp.toDate(),
-                timestampformatted: startTimestamp.format("ddd MMM DD, YYYY"),
-                id: rowObject.id,
-            };
-            if (rowObject.end) {
-                var endTimeParsed = moment.tz(rowObject.end, "HH:mm", "Europe/Stockholm");
-                var endTimestamp = calendarDate.clone().add(endTimeParsed);
-                if (endTimeParsed < timeParsed) { // after midnight
-                    endTimestamp.add(1, "day");
-                }
-                logEntry.endtimestamp = endTimestamp.toDate();
-                logEntry.duration = moment.utc(endTimestamp - startTimestamp).format("HH:mm");
-            }
-            EventLog.upsert({
-                timestamp: logEntry.timestamp
-            }, logEntry, {
-                upsert: true
-            });
-        });
-        isSyncing = false;
-        */
+    AddMessage("Finished!", "parseSheetData");
 }
 
 function sendLogEntry(row, newLogEntry) {
@@ -260,6 +209,9 @@ function sendLogEntry(row, newLogEntry) {
     sheetHandle.send({
         autoSize: true
     }, function(err) {
-        if (err) throw err;
+        if (err) {
+            AddMessage(err, "sendLogEntry");
+            throw err;
+        }
     });
 }

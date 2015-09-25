@@ -1,42 +1,83 @@
 <template name="db">
     {{#if Template.subscriptionsReady}}
-    <h3>Database</h3>
-    <div class="db-actions">
-        <div class="ui-button js-clear">Clear data</div>
-        <div class="ui-button js-syncnow">Sync now</div>
-    </div>
-    <div class="db-info">
-        {{#if errorMessage}}
-        {{#Animate}}
-        <div class="db-info-message animate">{{errorMessage}}</div>
-        {{/Animate}}
-        {{/if}}
-        <div class="db-info-sheetrows">Sheetdata: {{numSheetRows}} rows</div>
-        <div class="db-info-eventrows">Eventlog: {{numEventRows}} rows ({{numEventRowsShown}} shown)</div>
-    </div>
-    {{> dbLog}}
+        <div class="ui-card">
+            <div class="ui-paneview">
+                <div class="ui-pane">
+                    <div class="db-info">
+                        <div class="db-info-sheetrows">Sheetdata: {{numSheetRows}} rows</div>
+                        <div class="db-info-eventrows">Eventlog: {{numEventRows}} rows ({{numEventRowsShown}} shown)</div>
+                    </div>
+                    <div class="db-actions">
+                        <div class="ui-button js-clear">Clear data</div>
+                        <div class="ui-button js-syncnow">Sync now</div>
+                    </div>
+                </div>
+                <div class="ui-pane">
+                    <div class="db-messages">
+                        <div class="db-messages-table">
+                            {{#each messages}}
+                                {{> messageLogEntry}}
+                            {{/each}}
+                        </div>
+                    </div>
+                    <div class="db-actions">
+                    {{#if hasMessages}}
+                        <div class="ui-button ui-button-tiny js-clearmessages">Clear messages</div>
+                    {{/if}}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="ui-card">
+            {{> dbLog}}
+        </div>
     {{else}}
-    <h3>Waiting for data...</h3>
+        <h3>Waiting for data...</h3>
     {{/if}}
 </template>
-
+<template name="messageLogEntry">
+    {{#if errorMessage}}
+        {{#Animate}}
+            <div class="db-info-message animate">
+                <div class="message-timestamp">{{prettyDate timestamp}}</div>
+                <div class="message-origin">{{origin}}</div>
+                <div class="message-text">{{errorMessage}}</div>
+            </div>
+        {{/Animate}}
+    {{/if}}
+</template>
 <template name="dbLog">
     <div class="db-log">
+        <div class="db-log-row db-log-headers">
+            <div class="db-log-header db-log-row-cell">Date</div>
+            <div class="db-log-header db-log-row-cell">Activity</div>
+            <div class="db-log-header db-log-row-cell">Label</div>
+            <div class="db-log-header db-log-row-cell">Time</div>
+            <div class="db-log-header db-log-row-cell">End</div>
+            <div class="db-log-header db-log-row-cell">Duration</div>
+            <div class="db-log-header db-log-row-cell">Timestamp</div>
+            <div class="db-log-header db-log-row-cell">End timestamp</div>
+            <div class="db-log-header db-log-row-cell">Formatted timestamp</div>
+            <div class="db-log-header db-log-row-cell">Id</div>
+        </div>
         {{#each dbLogEntries}} {{> dbLogEntry}} {{/each}}
     </div>
+    <div class="db-actions">
+        <div class="ui-button ui-button-tiny js-eventloadmore">Load more</div>
+        <div class="ui-button ui-button-tiny js-eventloadall">Load all</div>
+    </div>
 </template>
-
 <template name="dbLogEntry">
     <div class="db-log-row">
-        <div class="db-log-row-cell">date: {{date}}</div>
-        <div class="db-log-row-cell">a: {{activity}}</div>
-        <div class="db-log-row-cell">l: {{label}}</div>
-        <div class="db-log-row-cell">t: {{time}}</div>
-        <div class="db-log-row-cell">e: {{end}}</div>
-        <div class="db-log-row-cell">dur: {{duration}}</div>
-        <div class="db-log-row-cell">ts: {{prettyDate timestamp}}</div>
-        <div class="db-log-row-cell">ets: {{prettyDate endtimestamp}}</div>
-        <div class="db-log-row-cell">tsf: {{timestampformatted}}</div>
-        <div class="db-log-row-cell">id: {{id}}</div>
+        <div class="db-log-row-cell">{{date}}</div>
+        <div class="db-log-row-cell">{{activity}}</div>
+        <div class="db-log-row-cell">{{label}}</div>
+        <div class="db-log-row-cell">{{time}}</div>
+        <div class="db-log-row-cell">{{end}}</div>
+        <div class="db-log-row-cell">{{duration}}</div>
+        <div class="db-log-row-cell">{{prettyDate timestamp}}</div>
+        <div class="db-log-row-cell">{{prettyDate endtimestamp}}</div>
+        <div class="db-log-row-cell">{{timestampformatted}}</div>
+        <div class="db-log-row-cell">{{id}}</div>
     </div>
 </template>

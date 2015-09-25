@@ -1,19 +1,37 @@
 .db-actions {
-    padding: 12px;
+	flex: 0 0 auto;
     display: flex;
     flex-flow: row nowrap;
+    padding: 12px 0 0;
 }
 
 .db-info {
-    padding: 12px;
     display: flex;
     flex-flow: column nowrap;
     align-items: flex-start;
 }
 
+.db-messages {
+	flex: 1 1 auto;
+    max-height: 30vh;
+    overflow-y: auto;
+}
+
+.db-messages-table {
+    display: table;
+}
+
 .db-info-message {
-    color: red;
+    display: table-row;
+    color: hsl(210, 5%, 40%);
     transition: all 0.2s cubic-bezier(1, 2.5, 0.7, 0.7);
+    .message-timestamp,
+    .message-origin,
+    .message-text {
+        display: table-cell;
+        padding: 0 12px 0 0;
+    }
+    .message-text {}
 }
 
 .db-info-message.animate {
@@ -23,7 +41,14 @@
 
 .db-log {
     display: table;
-    font-size: 11px;
+}
+
+.db-log-headers {
+    background: hsl(210, 50%, 50%);
+}
+
+.db-log-header {
+    color: white;
 }
 
 .db-log-row {
@@ -32,5 +57,9 @@
 
 .db-log-row-cell {
     display: table-cell;
-    padding: 12px;
+    padding: 4px 8px 4px 4px;
+}
+
+.db-log-row-cell + .db-log-row-cell {
+    border-left: 1px solid hsl(210, 50%, 50%);
 }
