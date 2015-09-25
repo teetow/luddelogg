@@ -51,11 +51,14 @@ Template.dbLog.onCreated(function() {
     var instance = this;
     instance.pageSize = 10;
     instance.eventFetchPage = new ReactiveVar(1);
+    instance.eventsFetched = new ReactiveVar(0);
     instance.eventFetchLimit = function() {
         return instance.eventFetchPage.get() * instance.pageSize;
     };
     instance.autorun(function() {
-        instance.subscribe("dbEventLog", instance.eventFetchLimit(), function() {});
+        instance.subscribe("dbEventLog", instance.eventFetchLimit(), function() {
+            instance.eventsFetched.set(instance.eventFetchLimit());
+        });
     });
 });
 Template.dbLog.helpers({
@@ -65,6 +68,10 @@ Template.dbLog.helpers({
                 id: -1
             }
         });
+    },
+    showingAll: function() {
+        var instance = Template.instance();
+        return (EventLog.find().count() == Counts.get("eventLog"));
     },
 });
 Template.dbLog.events({

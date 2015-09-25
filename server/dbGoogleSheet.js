@@ -120,10 +120,12 @@ function importSheetData(err, rows, info) {
     SheetData.remove({});
     var data = _.values(rows);
     var numRows = data.length;
+    var reportEvery = 100;
     data.forEach(function(rowitem, rowindex, rowarray) {
         var numRowsImported = rowindex + 1;
-        if (numRowsImported % 250 == 0 || numRowsImported == numRows) {
+        if (numRowsImported % reportEvery == 0 || numRowsImported == numRows) {
             AddMessage("Imported " + (numRowsImported) + " of " + numRows + " rows.", "importSheetData");
+            reportEvery = reportEvery * 3;
         }
         var rowObject = {
             time: rowitem[1],
@@ -154,10 +156,12 @@ function parseSheetData() {
         }
     }).fetch();
     var numRows = data.length;
+    var reportEvery = 100;
     data.forEach(function(rowitem, rowindex, rowarray) {
         var numRowsImported = rowindex + 1;
-        if (numRowsImported % 250 == 0 || numRowsImported == numRows) {
+        if (numRowsImported % reportEvery == 0 || numRowsImported == numRows) {
             AddMessage("Processed " + numRowsImported + " of " + numRows + " rows.", "parseSheetData");
+            reportEvery = reportEvery * 3;
         }
         // skip on incomplete data
         if (!rowitem.activity || !rowitem.time || !rowitem.date) {

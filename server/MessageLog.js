@@ -12,10 +12,26 @@ Meteor.methods({
 AddMessage = function(message, origin) {
 	MessageLog.insert({
 		message: message,
-		timestamp: new Date().toISOString(),
+		timestamp: new Date(),
 		origin: origin
-	})
+	});
+	PurgeOldMessages();
 }
 ClearMessages = function() {
 	MessageLog.remove({});
+}
+PurgeOldMessages = function() {
+	var cutoffDate = moment();
+	cutoffDate.subtract(10, "minutes");
+	var oldMessages = MessageLog.find({
+		timestamp: {
+			$lte: cutoffDate.toDate()
+		}
+	}).fetch();
+	var oldMsgIds = _.pluck(oldMessages, "_id");
+	MessageLog.remove({
+		_id: {
+			$in: oldMsgIds
+		}
+	});
 }

@@ -22,7 +22,7 @@
                     </div>
                     <div class="db-actions">
                     {{#if hasMessages}}
-                        <div class="ui-button ui-button-tiny js-clearmessages">Clear messages</div>
+                        <div class="ui-button ui-button-tiny js-clearmessages">Clear Messages</div>
                     {{/if}}
                     </div>
                 </div>
@@ -63,7 +63,7 @@
         {{#each dbLogEntries}} {{> dbLogEntry}} {{/each}}
     </div>
     <div class="db-actions">
-        <div class="ui-button ui-button-tiny js-eventloadmore">Load more</div>
+        <div class="ui-button ui-button-tiny js-eventloadmore">{{#if showingAll}}Load Less{{else}}Load More{{/if}}</div>
         <div class="ui-button ui-button-tiny js-eventloadall">Load all</div>
     </div>
 </template>
