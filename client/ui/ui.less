@@ -47,6 +47,11 @@ h6 {
     padding-left: 24px;
     border-left: 2px dashed @color-accentgrey;
 }
+
+.ui-buttonbar {
+    padding: 6px 0;
+}
+
 .ui-button {
     padding: 6px 9px;
     font-size: 1.0em;
@@ -109,7 +114,7 @@ h6 {
     margin-right: auto;
 }
 
-@media only screen and (min-device-width: 320px) and (max-device-width: 375px) and (-webkit-min-device-pixel-ratio: 2) {
+@media only screen and (min-device-width: 320px) and (max-device-width: 480px) and (-webkit-min-device-pixel-ratio: 2) {
     body {
         font-size: 12px;
         padding: 0;
@@ -125,13 +130,10 @@ h6 {
     }
 }
 
-@media only screen and (min-device-width: 375px) and (max-device-width: 480px) and (-webkit-min-device-pixel-ratio: 2) {
-    body {
-        font-size: 16px;
-        padding: 0;
-        margin: 0;
-    }
+// iphone 6 in landscape
+@media only screen and (min-device-width: 320px) and (max-device-width: 667px) and (-webkit-min-device-pixel-ratio: 2) {
     .ui-card {
+        overflow: auto;
         min-width: initial;
         padding: 18px;
         margin: 18px;
@@ -149,5 +151,19 @@ h6 {
     .sleepchart-row-header {
         flex: 0 0 50px;
         margin: 0 0 0 8px;
+    }
+    .ui-paneview {
+        display: flex;
+        flex-flow: column nowrap;
+    }
+    .ui-pane + .ui-pane {
+        border: none;
+        padding: 0;
+    }
+    .db-log {
+        font-size: 0.8em;
+    }
+    .db-messages {
+        font-size: 0.8em;
     }
 }

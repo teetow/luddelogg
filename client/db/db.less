@@ -1,3 +1,8 @@
+@color-accentgrey: hsl(210, 5%, 95%);
+@color-blue: hsla(200, 85%, 50%, 100%);
+@color-blue-active: hsla(200, 90%, 40%, 100%);
+@color-transparent: hsla(200, 0%, 100%, 0%);
+
 .db-actions {
 	flex: 0 0 auto;
     display: flex;
@@ -13,8 +18,9 @@
 
 .db-messages {
 	flex: 1 1 auto;
-    max-height: 30vh;
+    max-height: 40vh;
     overflow-y: auto;
+    background-color: @color-accentgrey;
 }
 
 .db-messages-table {
