@@ -2,9 +2,6 @@
     <div class="ui-card">
         <div class="ui-paneview">
             <div class="ui-pane db-infopane">
-                <div class="db-info">
-                    <div class="db-info-eventrows">Eventlog: {{numEventRows}} rows ({{numEventRowsShown}} shown)</div>
-                </div>
                 <div class="ui-buttonbar db-actions">
                     <div class="ui-button js-clear">Clear data</div>
                     <div class="ui-button js-syncnow">Sync now</div>
@@ -41,6 +38,10 @@
 </template>
 <template name="dbLog">
     <div class="ui-card">
+        <div class="db-info">
+            <div class="db-info-eventrows">Eventlog: {{numEventRows}} rows ({{numEventRowsShown}} shown)</div>
+        </div>
+
         <div class="db-log">
             <div class="db-log-row db-log-headers">
                 <div class="db-log-header db-log-row-cell">Date</div>
@@ -62,9 +63,9 @@
             {{#if hasMoreEvents}}
                 <div class="ui-buttonbar db-actions">
                     <div class="ui-button ui-button-tiny js-eventloadmore">
-                        {{#if showingAll}}Load Less{{else}}Load More{{/if}}
+                        {{#if showingAll}}Show less{{else}}Show more{{/if}}
                     </div>
-                    <div class="ui-button ui-button-tiny js-eventloadall">Load all</div>
+                    <div class="ui-button ui-button-tiny js-eventloadall">Show all</div>
                 </div>
             {{/if}}
         {{else}}

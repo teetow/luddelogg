@@ -1,17 +1,10 @@
 Template.db.onCreated(function() {
     var instance = this;
     this.autorun(function() {
-        instance.subscribe("eventLogCount");
         instance.subscribe("dbMessageLog");
     });
 });
 Template.db.helpers({
-    numEventRows: function() {
-        return Counts.get("eventLog");
-    },
-    numEventRowsShown: function() {
-        return EventLog.find().count();
-    },
     messages: function() {
         return MessageLog.find({}, {
             sort: {
@@ -46,6 +39,7 @@ Template.messageLogEntry.helpers({
 // dbLog ----------------------------
 Template.dbLog.onCreated(function() {
     var instance = this;
+    instance.subscribe("eventLogCount");
     instance.pageSize = 10;
     instance.eventsFetched = new ReactiveVar(0);
     instance.eventFetchLimit = new ReactiveVar(instance.pageSize);
@@ -65,6 +59,12 @@ Template.dbLog.onCreated(function() {
     });
 });
 Template.dbLog.helpers({
+    numEventRows: function() {
+        return Counts.get("eventLog");
+    },
+    numEventRowsShown: function() {
+        return Template.instance().eventsFetched.get();
+    },
     dbLogEntries: function() {
         return Template.instance().events();
     },
