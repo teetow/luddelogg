@@ -1,59 +1,22 @@
 <template name="sleepchart">
-    {{#if Template.subscriptionsReady}}
     <div class="sleepchart-options">
         {{#each options}}
             {{> Template.dynamic template=sleepchartOptionTemplate}}
         {{/each}}
     </div>
     <div class="sleepchart">
-        {{#each sleeprows}}
-            {{> sleepchartRow}}
-        {{/each}}
-        {{> sleepchartTooltip}}
+        {{> sleepchartGraph sleeprows}} {{> sleepchartTooltip}}
     </div>
-    {{else}}
-    <div>Loading sleepchart...</div>
-    {{/if}}
-</template>
-<template name="sleepchartRow">
-    <div class="sleepchart-row {{weekendclass}} {{todayclass}}">
-        <div class="sleepchart-row-header">{{shortdate date}}</div>
-        <div class="sleepchart-row-events">
-            {{#each sleepchartEvents}}
-                {{> Template.dynamic template=sleepchartEventTemplate}}
-            {{/each}}
-            {{#if isToday}}
-            <div class="sleepchart-row-event mod-timeline" style="left: {{timeindicatorPos}}%;">
-                <div class="sleepchart-time">{{now}}</div>
+    {{#if Template.subscriptionsReady}}
+        {{#if loadMore}}
+            <div class="ui-buttonbar db-actions">
+                <div class="ui-button ui-button-tiny js-loadmore">
+                    {{#if showingAll}}Show less{{else}}Show more{{/if}}
+                </div>
+                <div class="ui-button ui-button-tiny js-loadall">Show all</div>
             </div>
-            {{/if}}
-        </div>
-    </div>
-</template>
-<template name="sleepchartEvent">
-    <div class="sleepchart-row-event event-sleep" style="left: {{left}}%; width: {{width}}%; background-color: {{color}};">
-        {{#if options.showstarttimes.value}}    <div class="event-time">        {{data.time}}       </div>{{/if}}
-        {{#if options.showdurations.value}}     <div class="event-duration">    {{data.duration}}   </div>{{/if}}
-        {{#if options.showendtimes.value}}      <div class="event-end">         {{data.end}}        </div>{{/if}}
-    </div>
-</template>
-<template name="sleepchartEventEstimate">
-    <div class="sleepchart-row-event event-sleep mod-estimate-elapsed" style="left: {{estimate.elapsedpos}}%; width: {{estimate.elapsedwidth}}%; background-color: {{estimate.color}};">
-        <div class="event-time">{{data.time}}</div>
-    </div>
-    <div class="sleepchart-row-event event-sleep event-sleep-estimate" style="left: {{estimate.left}}%; width: {{estimate.width}}%; background-color: {{estimate.color}};">
-        <div class="event-end">{{data.end}}</div>
-    </div>
-</template>
-<template name="sleepchartGenericEvent">
-    <div class="sleepchart-row-event {{eventclass}}" style="left: {{left}}%;">
-        {{#each icons}}
-        <div class="event-icon {{iconclass}}"></div>
-        {{/each}}
-    </div>
-</template>
-<template name="sleepchartTooltip">
-    <div class="sleepchart-tooltip" style="left: {{tooltipinfo.pos.left}}; top:{{tooltipinfo.pos.top}};">
-        <div class="sleepchart-tooltip-info">{{tooltipinfo.text}}</div>
-    </div>
+        {{/if}}
+    {{else}}
+        <h3>Loading...</h3>
+    {{/if}}
 </template>

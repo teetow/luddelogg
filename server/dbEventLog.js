@@ -1,14 +1,28 @@
 Meteor.publish("dbEventLog", function(limit) {
-	if (typeof limit !== "number") {
-		AddMessage("Warning! No limit specified for dbLogEvent subscription. Check your code.");
-		return EventLog.find();
-	}
-	return EventLog.find({}, {
+	var filter = {};
+	var options = {
 		sort: {
 			id: -1
-		},
-		limit: limit
-	});
+		}
+	};
+	if (limit.days) {
+		if (limit.days != 0) {
+			var cutoffdate = moment();
+			cutoffdate.subtract(limit.days, "days");
+			var cutoff = moment(cutoffdate.format("YYYY-MM-DD"));
+			filter = {
+				timestamp: {
+					$gte: cutoff.toDate()
+				}
+			};
+		} else {
+			options.limit = 0;
+		}
+	}
+	if (limit.number) {
+		options.limit = limit;
+	}
+	return EventLog.find(filter, options);
 });
 Meteor.publish('eventLogCount', function() {
 	var sub = this;

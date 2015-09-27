@@ -7,6 +7,13 @@ var EventiconTable = {
     drops: "event-icon-drops",
     toothbrush: "event-icon-toothbrush",
 };
+Template.sleepchartEvent.helpers({
+    options: function() {
+        var sleepchartTemplate = Template.instance().closestInstance("sleepchart");
+        var optionsObject = sleepchartTemplate.options.get();
+        return optionsObject;
+    },
+});
 Template.sleepchartEventEstimate.helpers({
     estimate: function() {
         var nowMoment = moment(Session.get("now"));
@@ -21,13 +28,6 @@ Template.sleepchartEventEstimate.helpers({
             left: nowPercentage,
             width: this.width - (nowPercentage - this.left),
         };
-    },
-});
-Template.sleepchartEvent.helpers({
-    options: function() {
-        var sleepchartTemplate = Template.instance().closestInstance("sleepchart");
-        var optionsObject = sleepchartTemplate.options.get();
-        return optionsObject;
     },
 });
 Template.sleepchartGenericEvent.helpers({

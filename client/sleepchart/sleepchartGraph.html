@@ -1,0 +1,20 @@
+<template name="sleepchartGraph">
+    {{#each this}}
+        {{> sleepchartRow}}
+    {{/each}}
+</template>
+<template name="sleepchartRow">
+    <div class="sleepchart-row {{weekendclass}} {{todayclass}}">
+        <div class="sleepchart-row-header">{{shortdate date}}</div>
+        <div class="sleepchart-row-events">
+            {{#each sleepchartEvents}}
+                {{> Template.dynamic template=sleepchartEventTemplate}}
+            {{/each}}
+            {{#if isToday}}
+                <div class="sleepchart-row-event mod-timeline" style="left: {{timeindicatorPos}}%;">
+                    <div class="sleepchart-time">{{now}}</div>
+                </div>
+            {{/if}}
+        </div>
+    </div>
+</template>

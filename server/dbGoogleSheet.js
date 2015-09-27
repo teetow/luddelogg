@@ -204,7 +204,6 @@ function parseSheetData() {
         });
     });
     isSyncing = false;
-    AddMessage("Finished!", "parseSheetData");
 }
 
 function sendLogEntry(row, newLogEntry) {

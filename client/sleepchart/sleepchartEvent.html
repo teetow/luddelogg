@@ -1,0 +1,33 @@
+<template name="sleepchartEvent">
+    <div class="sleepchart-row-event event-sleep" style="left: {{left}}%; width: {{width}}%; background-color: {{color}};">
+        {{#if options.showstarttimes.value}}
+            <div class="event-time"> {{data.time}} </div>
+        {{/if}}
+        {{#if options.showdurations.value}}
+            <div class="event-duration"> {{data.duration}} </div>
+        {{/if}}
+        {{#if options.showendtimes.value}}
+            <div class="event-end"> {{data.end}} </div>
+        {{/if}}
+    </div>
+</template>
+<template name="sleepchartEventEstimate">
+    <div class="sleepchart-row-event event-sleep mod-estimate-elapsed" style="left: {{estimate.elapsedpos}}%; width: {{estimate.elapsedwidth}}%; background-color: {{estimate.color}};">
+        <div class="event-time">{{data.time}}</div>
+    </div>
+    <div class="sleepchart-row-event event-sleep event-sleep-estimate" style="left: {{estimate.left}}%; width: {{estimate.width}}%; background-color: {{estimate.color}};">
+        <div class="event-end">{{data.end}}</div>
+    </div>
+</template>
+<template name="sleepchartGenericEvent">
+    <div class="sleepchart-row-event {{eventclass}}" style="left: {{left}}%;">
+        {{#each icons}}
+            <div class="event-icon {{iconclass}}"></div>
+        {{/each}}
+    </div>
+</template>
+<template name="sleepchartTooltip">
+    <div class="sleepchart-tooltip" style="left: {{tooltipinfo.pos.left}}; top:{{tooltipinfo.pos.top}};">
+        <div class="sleepchart-tooltip-info">{{tooltipinfo.text}}</div>
+    </div>
+</template>

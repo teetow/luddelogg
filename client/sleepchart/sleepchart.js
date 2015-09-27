@@ -1,20 +1,41 @@
 Template.sleepchart.onCreated(function() {
     var instance = this;
     instance.chartdata = new ReactiveVar();
-    instance.subscribe("dbEventLog", 30);
-    instance.events = function(){
+    instance.numDays = 7;
+    instance.limit = new ReactiveVar(instance.numDays);
+    instance.fetched = new ReactiveVar(0);
+    instance.autorun(function() {
+        var limit = instance.limit.get();
+        instance.subscribe("dbEventLog", {
+            days: limit
+        }, function(rowsFetched) {
+            instance.fetched.set(EventLog.find().count());
+        });
+    })
+    instance.events = function() {
         return EventLog.find({}, {
             sort: {
                 timestamp: -1
-            }
+            },
+            limit: instance.fetched.get()
         });
-    };    
+    };
     this.options = new ReactiveVar({
-        showstarttimes: {label: "Starts",  type: "checkbox", value: true, },
-        showdurations:  {label: "Durations",    type: "checkbox", value: false, },
-        showendtimes:   {label: "Ends",    type: "checkbox", value: true, },
-        // showfood:       {label: "Food",         type: "checkbox", value: true, },
-        // showsleep:      {label: "Sleep",        type: "checkbox", value: true, },
+        showstarttimes: {
+            label: "Starts",
+            type: "checkbox",
+            value: true,
+        },
+        showdurations: {
+            label: "Durations",
+            type: "checkbox",
+            value: false,
+        },
+        showendtimes: {
+            label: "Ends",
+            type: "checkbox",
+            value: true,
+        },
     });
     this.chartPrefs = {
         getPref: function(activity, label, pref) {
@@ -27,12 +48,27 @@ Template.sleepchart.onCreated(function() {
             }
             return foundPref;
         },
-        "default": {color: "#999", estimate: "00:30", },
+        "default": {
+            color: "#999",
+            estimate: "00:30",
+        },
         "sleep": {
-            "default":  {color: "#89f",     estimate: "01:00",},
-            "nap 1":    {color: "#ffa000",  estimate: "02:00",},
-            "nap 2":    {color: "#5C6BC0",  estimate: "01:30",},
-            "night":    {color: "#4CAF50",  estimate: "10:30",},
+            "default": {
+                color: "#89f",
+                estimate: "01:00",
+            },
+            "nap 1": {
+                color: "#ffa000",
+                estimate: "02:00",
+            },
+            "nap 2": {
+                color: "#5C6BC0",
+                estimate: "01:30",
+            },
+            "night": {
+                color: "#4CAF50",
+                estimate: "10:30",
+            },
         },
     };
 });
@@ -132,6 +168,10 @@ Template.sleepchart.helpers({
             });
         });
         return sleepRows;
+    },
+    loadMore: function() {
+        var instance = Template.instance();
+        return instance.events().count() >= instance.fetched.get();
     }
 });
 Template.sleepchart.events({
@@ -149,5 +189,13 @@ Template.sleepchart.events({
     "mouseleave .sleepchart-row-event": function(e, tpl) {
         $(e.currentTarget).removeClass("mod-hilight");
         Session.set("tooltipInfo", undefined);
+    },
+    "click .js-loadmore": function() {
+        var instance = Template.instance();
+        var limit = instance.limit.get() + instance.numDays;
+        instance.limit.set(limit);
+    },
+    "click .js-loadall": function() {
+        Template.instance().limit.set(0);
     },
 });
