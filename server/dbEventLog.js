@@ -8,5 +8,8 @@ Meteor.publish("dbEventLog", function(limit) {
 	});
 });
 Meteor.publish('eventLogCount', function() {
-	Counts.publish(this, 'eventLog', EventLog.find());
+	var sub = this;
+	Meteor.defer(function() {
+		Counts.publish(sub, 'eventLog', EventLog.find());
+	});
 });

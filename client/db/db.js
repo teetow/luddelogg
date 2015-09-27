@@ -1,7 +1,7 @@
 Template.db.onCreated(function() {
     var instance = this;
     this.autorun(function() {
-        instance.subscribe("sheetDataCount", function() {});
+        instance.subscribe("sheetDataCount");
         instance.subscribe("eventLogCount");
         instance.subscribe("dbMessageLog");
     });
