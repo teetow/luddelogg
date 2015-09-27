@@ -18,5 +18,5 @@ mrt:reactive-publish
 meteorhacks:npm
 lauricio:less-autoprefixer
 settinghead:auto-nprogress
-tmeasday:publish-counts
+ros:publish-counts
 appmill:animation-hooks

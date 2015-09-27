@@ -4,6 +4,6 @@ Meteor.publish("sheetData", function() {
 Meteor.publish('sheetDataCount', function() {
 	var sub = this;
 	Meteor.defer(function() {
-		Counts.publish(sub, 'sheetData', SheetData.find());
+		Counts.publish(sub, 'sheetData', SheetData.find(), {fastCount: true});
 	});
 });

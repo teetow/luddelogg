@@ -10,6 +10,6 @@ Meteor.publish("dbEventLog", function(limit) {
 Meteor.publish('eventLogCount', function() {
 	var sub = this;
 	Meteor.defer(function() {
-		Counts.publish(sub, 'eventLog', EventLog.find());
+		Counts.publish(sub, 'eventLog', EventLog.find(), {fastCount: true});
 	});
 });
