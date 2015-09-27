@@ -13,27 +13,16 @@ InputReady = new ReactiveVar(false);
 Template.registerHelper("makeDuration", function(duration) {
     return makeDuration(duration);
 });
-Router.map(function() {
-    this.route("/", function() {
-        this.render('dashboard');
-    });
-    this.route('dashboard');
-    this.route('sleep', {
-        waitOn: function() {
-            return IRLibLoader.load('https://www.google.com/jsapi', {
-                success: function() {
-                    console.log('API loaded.');
-                    loadChartPackages(["timeline"]);
-                }
-            });
-        }
-    });
-    this.route('sleepchart');
-    this.route('lastlog');
-    this.route('input');
-    this.route('db');
-    this.route('status');
-});
+/* beautify preserve:start */
+FlowRouter.route("/",           {action: function(params) {BlazeLayout.render("mainLayout", {content: "dashboard" }); } });
+FlowRouter.route("/dashboard",  {action: function(params) {BlazeLayout.render("mainLayout", {content: "dashboard" }); } });
+FlowRouter.route("/sleepchart", {action: function(params) {BlazeLayout.render("mainLayout", {content: "sleepchart"}); } });
+FlowRouter.route("/lastlog",    {action: function(params) {BlazeLayout.render("mainLayout", {content: "lastlog"   }); } });
+FlowRouter.route("/input",      {action: function(params) {BlazeLayout.render("mainLayout", {content: "input"     }); } });
+FlowRouter.route("/db",         {action: function(params) {BlazeLayout.render("mainLayout", {content: "db"        }); } });
+FlowRouter.route("/status",     {action: function(params) {BlazeLayout.render("mainLayout", {content: "status"    }); } });
+/* beautify preserve:end */
+
 Meteor.methods({
     addMessage: function(message) {
         AddMessage(message, "addMessage Meteor method");

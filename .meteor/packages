@@ -7,7 +7,8 @@
 npm-container
 meteor-platform
 insecure
-iron:router
+kadira:flow-router
+kadira:blaze-layout
 manuelschoebel:wait-on-lib
 meteorhacks:aggregate
 momentjs:moment
