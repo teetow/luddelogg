@@ -18,5 +18,5 @@ msavin:mongol
 mrt:reactive-publish
 meteorhacks:npm
 lauricio:less-autoprefixer
-ros:publish-counts
+tmeasday:publish-counts
 appmill:animation-hooks

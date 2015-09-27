@@ -1,7 +1,7 @@
 Template.sleepchart.onCreated(function() {
     var instance = this;
     instance.chartdata = new ReactiveVar();
-    instance.subscribe("dbEventLog");
+    instance.subscribe("dbEventLog", 30);
     instance.events = function(){
         return EventLog.find({}, {
             sort: {

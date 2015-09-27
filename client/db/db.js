@@ -1,15 +1,11 @@
 Template.db.onCreated(function() {
     var instance = this;
     this.autorun(function() {
-        instance.subscribe("sheetDataCount");
         instance.subscribe("eventLogCount");
         instance.subscribe("dbMessageLog");
     });
 });
 Template.db.helpers({
-    numSheetRows: function() {
-        return Counts.get("sheetData");
-    },
     numEventRows: function() {
         return Counts.get("eventLog");
     },
@@ -47,38 +43,47 @@ Template.messageLogEntry.helpers({
         return this.message;
     }
 });
+// dbLog ----------------------------
 Template.dbLog.onCreated(function() {
     var instance = this;
     instance.pageSize = 10;
-    instance.eventFetchPage = new ReactiveVar(1);
     instance.eventsFetched = new ReactiveVar(0);
-    instance.eventFetchLimit = function() {
-        return instance.eventFetchPage.get() * instance.pageSize;
-    };
-    instance.autorun(function() {
-        instance.subscribe("dbEventLog", instance.eventFetchLimit(), function() {
-            instance.eventsFetched.set(instance.eventFetchLimit());
+    instance.eventFetchLimit = new ReactiveVar(instance.pageSize);
+    instance.events = function() {
+        return EventLog.find({}, {
+            sort: {
+                id: -1
+            },
+            limit: instance.eventsFetched.get()
+        });
+    }
+    this.autorun(function() {
+        var limit = instance.eventFetchLimit.get();
+        var subscription = instance.subscribe('dbEventLog', limit, function() {
+            instance.eventsFetched.set(limit);
         });
     });
 });
 Template.dbLog.helpers({
     dbLogEntries: function() {
-        return EventLog.find({}, {
-            sort: {
-                id: -1
-            }
-        });
+        return Template.instance().events();
     },
     showingAll: function() {
         var instance = Template.instance();
-        return (EventLog.find().count() == Counts.get("eventLog"));
+        var fetchedRows = instance.events().count();
+        var totalRows = Counts.get("eventLog");
+        return (fetchedRows == totalRows);
     },
+    hasMoreEvents: function() {
+        return Template.instance().events().count() >= Template.instance().eventFetchLimit.get();
+    }
 });
 Template.dbLog.events({
     "click .js-eventloadmore": function(event, instance) {
-        instance.eventFetchPage.set(instance.eventFetchPage.get() + 1);
+        var limit = instance.eventFetchLimit.get();
+        instance.eventFetchLimit.set(limit + instance.pageSize);
     },
     "click .js-eventloadall": function(event, instance) {
-        instance.eventFetchPage.set(0);
+        instance.eventFetchLimit.set(0);
     },
 });

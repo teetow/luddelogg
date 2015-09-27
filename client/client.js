@@ -22,14 +22,11 @@ FlowRouter.route("/input",      {action: function(params) {BlazeLayout.render("m
 FlowRouter.route("/db",         {action: function(params) {BlazeLayout.render("mainLayout", {content: "db"        }); } });
 FlowRouter.route("/status",     {action: function(params) {BlazeLayout.render("mainLayout", {content: "status"    }); } });
 /* beautify preserve:end */
-
 Meteor.methods({
     addMessage: function(message) {
         AddMessage(message, "addMessage Meteor method");
     },
-    clearMessages: function() {
-//        MessageLog.remove({});
-    },
+    clearMessages: function() {},
     dbLoadSheet: function() {},
     dbStartSyncSheet: function() {},
     dbStopSyncSheet: function() {},
