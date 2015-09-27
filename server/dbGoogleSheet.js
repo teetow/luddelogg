@@ -181,6 +181,8 @@ function parseSheetData() {
         var logEntry = {
             activity: rowitem.activity,
             label: rowitem.label,
+            amount: rowitem.amount,
+            score: rowitem.score,
             time: rowitem.time,
             end: rowitem.end,
             date: rowitem.date,
@@ -196,7 +198,7 @@ function parseSheetData() {
             }
         }
         EventLog.upsert({
-            timestamp: logEntry.timestamp
+            id: logEntry.id
         }, logEntry, {
             upsert: true
         });

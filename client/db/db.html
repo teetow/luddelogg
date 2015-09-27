@@ -2,7 +2,7 @@
     {{#if Template.subscriptionsReady}}
         <div class="ui-card">
             <div class="ui-paneview">
-                <div class="ui-pane">
+                <div class="ui-pane db-infopane">
                     <div class="db-info">
                         <div class="db-info-sheetrows">Sheetdata: {{numSheetRows}} rows</div>
                         <div class="db-info-eventrows">Eventlog: {{numEventRows}} rows ({{numEventRowsShown}} shown)</div>
@@ -12,7 +12,7 @@
                         <div class="ui-button js-syncnow">Sync now</div>
                     </div>
                 </div>
-                <div class="ui-pane">
+                <div class="ui-pane db-msgspane">
                     <div class="db-messages">
                         <div class="db-messages-table">
                             {{#each messages}}
@@ -52,6 +52,8 @@
             <div class="db-log-header db-log-row-cell">Date</div>
             <div class="db-log-header db-log-row-cell">Activity</div>
             <div class="db-log-header db-log-row-cell">Label</div>
+            <div class="db-log-header db-log-row-cell">Amount</div>
+            <div class="db-log-header db-log-row-cell">Score</div>
             <div class="db-log-header db-log-row-cell">Time</div>
             <div class="db-log-header db-log-row-cell">End</div>
             <div class="db-log-header db-log-row-cell">Duration</div>
@@ -72,6 +74,8 @@
         <div class="db-log-row-cell">{{date}}</div>
         <div class="db-log-row-cell">{{activity}}</div>
         <div class="db-log-row-cell">{{label}}</div>
+        <div class="db-log-row-cell">{{amount}}</div>
+        <div class="db-log-row-cell">{{score}}</div>
         <div class="db-log-row-cell">{{time}}</div>
         <div class="db-log-row-cell">{{end}}</div>
         <div class="db-log-row-cell">{{duration}}</div>
