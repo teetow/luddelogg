@@ -1,39 +1,33 @@
 <template name="db">
-    {{#if Template.subscriptionsReady}}
-        <div class="ui-card">
-            <div class="ui-paneview">
-                <div class="ui-pane db-infopane">
-                    <div class="db-info">
-                        <div class="db-info-sheetrows">Sheetdata: {{numSheetRows}} rows</div>
-                        <div class="db-info-eventrows">Eventlog: {{numEventRows}} rows ({{numEventRowsShown}} shown)</div>
-                    </div>
-                    <div class="ui-buttonbar db-actions">
-                        <div class="ui-button js-clear">Clear data</div>
-                        <div class="ui-button js-syncnow">Sync now</div>
+    <div class="ui-card">
+        <div class="ui-paneview">
+            <div class="ui-pane db-infopane">
+                <div class="db-info">
+                    <div class="db-info-sheetrows">Sheetdata: {{numSheetRows}} rows</div>
+                    <div class="db-info-eventrows">Eventlog: {{numEventRows}} rows ({{numEventRowsShown}} shown)</div>
+                </div>
+                <div class="ui-buttonbar db-actions">
+                    <div class="ui-button js-clear">Clear data</div>
+                    <div class="ui-button js-syncnow">Sync now</div>
+                </div>
+            </div>
+            <div class="ui-pane db-msgspane">
+                <div class="db-messages">
+                    <div class="db-messages-table">
+                        {{#each messages}}
+                            {{> messageLogEntry}}
+                        {{/each}}
                     </div>
                 </div>
-                <div class="ui-pane db-msgspane">
-                    <div class="db-messages">
-                        <div class="db-messages-table">
-                            {{#each messages}}
-                                {{> messageLogEntry}}
-                            {{/each}}
-                        </div>
-                    </div>
-                    <div class="ui-buttonbar db-actions">
+                <div class="ui-buttonbar db-actions">
                     {{#if hasMessages}}
                         <div class="ui-button ui-button-tiny js-clearmessages">Clear Messages</div>
                     {{/if}}
-                    </div>
                 </div>
             </div>
         </div>
-        <div class="ui-card">
-            {{> dbLog}}
-        </div>
-    {{else}}
-        <h3>Waiting for data...</h3>
-    {{/if}}
+    </div>
+    {{> dbLog}}
 </template>
 <template name="messageLogEntry">
     {{#if errorMessage}}
@@ -47,27 +41,35 @@
     {{/if}}
 </template>
 <template name="dbLog">
-    <div class="db-log">
-        <div class="db-log-row db-log-headers">
-            <div class="db-log-header db-log-row-cell">Date</div>
-            <div class="db-log-header db-log-row-cell">Activity</div>
-            <div class="db-log-header db-log-row-cell">Label</div>
-            <div class="db-log-header db-log-row-cell">Amount</div>
-            <div class="db-log-header db-log-row-cell">Score</div>
-            <div class="db-log-header db-log-row-cell">Time</div>
-            <div class="db-log-header db-log-row-cell">End</div>
-            <div class="db-log-header db-log-row-cell">Duration</div>
-            <div class="db-log-header db-log-row-cell">Timestamp</div>
-            <div class="db-log-header db-log-row-cell">End timestamp</div>
-            <div class="db-log-header db-log-row-cell">Formatted timestamp</div>
-            <div class="db-log-header db-log-row-cell">Id</div>
+    {{#if Template.subscriptionsReady}}
+        <div class="ui-card">
+            <div class="db-log">
+                <div class="db-log-row db-log-headers">
+                    <div class="db-log-header db-log-row-cell">Date</div>
+                    <div class="db-log-header db-log-row-cell">Activity</div>
+                    <div class="db-log-header db-log-row-cell">Label</div>
+                    <div class="db-log-header db-log-row-cell">Amount</div>
+                    <div class="db-log-header db-log-row-cell">Score</div>
+                    <div class="db-log-header db-log-row-cell">Time</div>
+                    <div class="db-log-header db-log-row-cell">End</div>
+                    <div class="db-log-header db-log-row-cell">Duration</div>
+                    <div class="db-log-header db-log-row-cell">Timestamp</div>
+                    <div class="db-log-header db-log-row-cell">End timestamp</div>
+                    <div class="db-log-header db-log-row-cell">Formatted timestamp</div>
+                    <div class="db-log-header db-log-row-cell">Id</div>
+                </div>
+                {{#each dbLogEntries}} {{> dbLogEntry}} {{/each}}
+            </div>
+            <div class="ui-buttonbar db-actions">
+                <div class="ui-button ui-button-tiny js-eventloadmore">
+                    {{#if showingAll}}Load Less{{else}}Load More{{/if}}
+                </div>
+                <div class="ui-button ui-button-tiny js-eventloadall">Load all</div>
+            </div>
         </div>
-        {{#each dbLogEntries}} {{> dbLogEntry}} {{/each}}
-    </div>
-    <div class="ui-buttonbar db-actions">
-        <div class="ui-button ui-button-tiny js-eventloadmore">{{#if showingAll}}Load Less{{else}}Load More{{/if}}</div>
-        <div class="ui-button ui-button-tiny js-eventloadall">Load all</div>
-    </div>
+    {{else}}
+        <h3>Waiting for log data</h3>
+    {{/if}}
 </template>
 <template name="dbLogEntry">
     <div class="db-log-row">
