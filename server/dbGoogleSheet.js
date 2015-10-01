@@ -50,26 +50,7 @@ Meteor.methods({
             AddMessage(err, "dbGetData");
         }
     },
-    dbAddEntry: function(newLogInfo) {
-        // not enabled yet
-        /*
-                if (!sheetHandle)
-                    throw "Cannot sync to sheet -- sheet not loaded.";
-                sheetHandle.metadata(function(err, metadata) {
-                    if (err) throw err;
-
-                    var newLogEntry = {
-                        1: newLogInfo.activity, //activity
-                        2: newLogInfo.label, // label
-                        3: moment().format("HH:mm:ss"), // start
-                        4: newLogInfo.end ? newLogInfo.end : "", // end
-                        5: moment().format("YYYY-MM-DD") // date
-                    };
-
-                    sendLogEntry(metadata.rowCount + 1, newLogEntry);
-                });
-        */
-    },
+    dbAddEntry: function(newLogInfo) {},
 });
 
 function loadSheet() {
@@ -165,7 +146,6 @@ function parseSheetData() {
         }
         // skip on incomplete data
         if (!rowitem.activity || !rowitem.time || !rowitem.date) {
-            isSyncing = false;
             return;
         }
         // stupid validity checking
@@ -174,7 +154,6 @@ function parseSheetData() {
         var parsedTimestamp = moment.tz(rowitem.timestamp, "Europe/Stockholm");
         if (!parsedTimestamp.isValid()) {
             AddMessage("Skipped row " + rowitem.id + " -- " + parsedTimestamp + " is an invalid timestamp.", "parseSheetData");
-            isSyncing = false;
             return;
         }
         var timestampDate = new Date(parsedTimestamp);
