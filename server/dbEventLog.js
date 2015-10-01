@@ -1,28 +1,23 @@
-Meteor.publish("dbEventLog", function(limit) {
-	var filter = {};
-	var options = {
+Meteor.publish("dbEventLog", function(userOptions) {
+	var queryFilter = {};
+	var queryOptions = {
 		sort: {
 			id: -1
-		}
+		},
+		limit: 0
 	};
-	if (limit.days) {
-		if (limit.days != 0) {
-			var cutoffdate = moment();
-			cutoffdate.subtract(limit.days, "days");
-			var cutoff = moment(cutoffdate.format("YYYY-MM-DD"));
-			filter = {
-				timestamp: {
-					$gte: cutoff.toDate()
-				}
-			};
-		} else {
-			options.limit = 0;
-		}
+	if (userOptions.days && userOptions.days > 0) {
+		var cutoffdate = moment();
+		cutoffdate.subtract(userOptions.days, "days");
+		var cutoff = moment(cutoffdate.format("YYYY-MM-DD"));
+		queryFilter.timestamp = {
+			$gte: cutoff.toDate()
+		};
 	}
-	if (limit.number) {
-		options.limit = limit;
+	if (userOptions.limit) {
+		queryOptions.limit = userOptions.limit;
 	}
-	return EventLog.find(filter, options);
+	return EventLog.find(queryFilter, queryOptions);
 });
 Meteor.publish('eventLogCount', function() {
 	var sub = this;

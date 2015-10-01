@@ -53,7 +53,9 @@ Template.dbLog.onCreated(function() {
     }
     this.autorun(function() {
         var limit = instance.eventFetchLimit.get();
-        var subscription = instance.subscribe('dbEventLog', limit, function() {
+        var subscription = instance.subscribe('dbEventLog', {
+            limit: limit
+        }, function() {
             instance.eventsFetched.set(limit);
         });
     });
