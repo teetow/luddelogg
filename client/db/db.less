@@ -2,19 +2,11 @@
 @color-blue: hsla(200, 85%, 50%, 100%);
 @color-blue-active: hsla(200, 90%, 40%, 100%);
 @color-transparent: hsla(200, 0%, 100%, 0%);
-.db-actions {
+.ui-buttonbar.db-actions {
     flex: 0 0 auto;
     display: flex;
     flex-flow: row nowrap;
-    padding: 12px 0 0;
-}
-
-.ui-pane.db-infopane {
-    flex: 1 1 30%;
-}
-
-.ui-pane.db-msgspane {
-    flex: 1 1 70%;
+    padding: 0 0 16px;
 }
 
 .db-info {
@@ -29,6 +21,7 @@
     max-height: 40vh;
     overflow-y: auto;
     background-color: @color-accentgrey;
+    padding: 8px;
 }
 
 .db-messages-table {
@@ -43,9 +36,8 @@
     .message-origin,
     .message-text {
         display: table-cell;
-        padding: 0 12px 0 0;
+        padding: 0 16px 0 0;
     }
-    .message-text {}
 }
 
 .db-info-message.animate {
