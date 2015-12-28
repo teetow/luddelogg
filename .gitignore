@@ -13,3 +13,4 @@ private/luddelogg-auth.json
 luddelogg.sublime-project
 luddelogg.sublime-workspace
 private/olddata.csv
+*.tags1
