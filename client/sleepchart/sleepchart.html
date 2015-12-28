@@ -4,9 +4,13 @@
             {{> Template.dynamic template=sleepchartOptionTemplate}}
         {{/each}}
     </div>
-    <div class="sleepchart">
-        {{> sleepchartGraph sleeprows}} {{> sleepchartTooltip}}
-    </div>
+    <sleepchart>
+        {{#each sleepRows}}
+            {{> sleepchartRow}}
+        {{/each}}
+
+        {{> sleepchartTooltip}}
+    </sleepchart>
     {{#if Template.subscriptionsReady}}
         {{#if loadMore}}
             <div class="ui-buttonbar db-actions">

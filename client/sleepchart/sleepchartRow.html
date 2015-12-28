@@ -1,0 +1,15 @@
+<template name="sleepchartRow">
+    <sleeprow class="{{#if isWeekend}}mod-weekend{{/if}} {{#if isToday}}mod-today{{/if}}">
+        <rowheader>{{shortdate date}}</rowheader>
+        <rowevents>
+            {{#each sleepchartEvents}}
+                {{> Template.dynamic template=sleepchartEventTemplate}}
+            {{/each}}
+            {{#if isToday}}
+                <timeline style="left: {{timeindicatorPos}}%;">
+                    <timestamp>{{now}}</timestamp>
+                </timeline>
+            {{/if}}
+        </rowevents>
+    </sleeprow>
+</template>

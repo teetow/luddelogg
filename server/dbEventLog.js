@@ -1,26 +1,32 @@
 Meteor.publish("dbEventLog", function(userOptions) {
-	var queryFilter = {};
-	var queryOptions = {
-		sort: {
-			id: -1
-		},
-		limit: 0
-	};
-	if (userOptions.days && userOptions.days > 0) {
-		var cutoffdate = moment();
-		cutoffdate.subtract(userOptions.days, "days");
-		var cutoff = moment(cutoffdate.format("YYYY-MM-DD"));
-		queryFilter.timestamp = {
-			$gte: cutoff.toDate()
+	let localUserOptions = {};
+	_.extend(localUserOptions, {
+		days: 0,
+	}, userOptions);
+	this.autorun(function(computation) {
+		let queryFilter = {};
+		let queryOptions = {
+			sort: {
+				id: -1
+			},
+			limit: 0
 		};
-	}
-	if (userOptions.limit) {
-		queryOptions.limit = userOptions.limit;
-	}
-	return EventLog.find(queryFilter, queryOptions);
+		if (localUserOptions.days && localUserOptions.days > 0) {
+			let cutoffdate = moment();
+			cutoffdate.subtract(localUserOptions.days, "days");
+			let cutoff = moment(cutoffdate.format("YYYY-MM-DD"));
+			queryFilter.timestamp = {
+				$gte: cutoff.toDate()
+			};
+		}
+		if (localUserOptions.limit) {
+			queryOptions.limit = localUserOptions.limit;
+		}
+		return EventLog.find(queryFilter, queryOptions);
+	});
 });
 Meteor.publish('eventLogCount', function() {
-	var sub = this;
+	let sub = this;
 	Meteor.defer(function() {
 		Counts.publish(sub, 'eventLog', EventLog.find());
 	});

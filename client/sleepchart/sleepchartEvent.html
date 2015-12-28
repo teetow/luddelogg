@@ -1,5 +1,5 @@
 <template name="sleepchartEvent">
-    <div class="sleepchart-row-event event-sleep" style="left: {{left}}%; width: {{width}}%; background-color: {{color}};">
+    <event class="event-sleep {{colorClass}}" style="left: {{left}}%; width: {{width}}%;">
         {{#if options.showstarttimes.value}}
             <div class="event-time"> {{data.time}} </div>
         {{/if}}
@@ -9,23 +9,26 @@
         {{#if options.showendtimes.value}}
             <div class="event-end"> {{data.end}} </div>
         {{/if}}
-    </div>
+    </event>
 </template>
+
 <template name="sleepchartEventEstimate">
-    <div class="sleepchart-row-event event-sleep mod-estimate-elapsed" style="left: {{estimate.elapsedpos}}%; width: {{estimate.elapsedwidth}}%; background-color: {{estimate.color}};">
+    <event class="event-sleep mod-estimate-elapsed {{estimate.colorClass}}" style="left: {{estimate.elapsedpos}}%; width: {{estimate.elapsedwidth}}%;">
         <div class="event-time">{{data.time}}</div>
-    </div>
-    <div class="sleepchart-row-event event-sleep event-sleep-estimate" style="left: {{estimate.left}}%; width: {{estimate.width}}%; background-color: {{estimate.color}};">
+    </event>
+    <event class="event-sleep event-sleep-estimate {{estimate.colorclass}}" style="left: {{estimate.left}}%; width: {{estimate.width}}%;">
         <div class="event-end">{{data.end}}</div>
-    </div>
+    </event>
 </template>
+
 <template name="sleepchartGenericEvent">
-    <div class="sleepchart-row-event {{eventclass}}" style="left: {{left}}%;">
+    <event class="{{eventclass}}" style="left: {{left}}%;">
         {{#each icons}}
             <div class="event-icon {{iconclass}}"></div>
         {{/each}}
-    </div>
+    </event>
 </template>
+
 <template name="sleepchartTooltip">
     <div class="sleepchart-tooltip" style="left: {{tooltipinfo.pos.left}}; top:{{tooltipinfo.pos.top}};">
         <div class="sleepchart-tooltip-info">{{tooltipinfo.text}}</div>

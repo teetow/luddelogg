@@ -3,15 +3,9 @@ Template.sleepchartRow.helpers({
         var date = moment(date, "YYYY-MM-DD");
         return date.format("ddd DD");
     },
-    weekendclass: function() {
+    isWeekend: function() {
         var ts = moment(this.date, "YYYY-MM-DD");
-        if (ts.day() === 0 || ts.day() === 6) {
-            return "mod-weekend";
-        }
-        return "mod-weekday";
-    },
-    todayclass: function() {
-        return isToday(this) ? "mod-today" : "";
+        return (ts.day() === 0 || ts.day() === 6);
     },
     sleepchartEventTemplate: function() {
         if (this.data.activity == "sleep") {

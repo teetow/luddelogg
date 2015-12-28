@@ -21,13 +21,11 @@
 </template>
 <template name="messageLogEntry">
     {{#if errorMessage}}
-        {{#Animate}}
-            <div class="db-info-message animate">
-                <div class="message-timestamp">{{prettyDate timestamp}}</div>
-                <div class="message-origin">{{origin}}</div>
-                <div class="message-text">{{errorMessage}}</div>
-            </div>
-        {{/Animate}}
+        <div class="db-info-message animate">
+            <div class="message-timestamp">{{prettyDate timestamp}}</div>
+            <div class="message-origin">{{origin}}</div>
+            <div class="message-text">{{errorMessage}}</div>
+        </div>
     {{/if}}
 </template>
 <template name="dbLog">

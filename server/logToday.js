@@ -1,3 +1,3 @@
-Meteor.reactivePublish("logToday", function(now) {
+Meteor.publish("logToday", function(now) {
 	return getToday(EventLog, now);
 });

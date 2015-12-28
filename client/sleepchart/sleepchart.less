@@ -1,65 +1,72 @@
-.sleepchart {
+sleepchart {
+    display: block;
     position: relative;
     width: 100%;
 }
 
-.sleepchart-time {
-    position: absolute;
-    padding: 3px 6px;
-    background-color: red;
-    border: 2px solid white;
-    text-align: center;
-    border-radius: 12px;
-    width: 48px;
-    left: -22px;
-    top: -8px;
-}
-
-.sleepchart-row {
+sleeprow {
     display: flex;
     height: 40px;
     align-items: center;
+    &.mod-weekend {
+        //    background-color: #e8e8e8;
+    }
+    &.mod-today {
+        height: 48px;
+        background-color: white;
+        border: 1px solid #abf;
+    }
+    &:not(.mod-weekend) + &.mod-weekend {
+        border-top: 1px solid lightgray;
+    }
+    &.mod-weekend + &:not(.mod-weekend) {
+        border-top: 1px solid lightgray;
+    }
 }
 
-.sleepchart-row.mod-weekend {
-//    background-color: #e8e8e8;
-}
-
-.sleepchart-row.mod-today {
-    height: 48px;
-    background-color: white;
-    border: 1px solid #abf;
-}
-
-.sleepchart-row.mod-weekday + .sleepchart-row.mod-weekend {
-    border-top: 1px solid lightgray;
-}
-
-.sleepchart-row.mod-weekend + .sleepchart-row.mod-weekday {
-    border-top: 1px solid lightgray;
-}
-
-.sleepchart-row-header {
+rowheader {
+    display: block;
     flex: 0 0 64px;
     margin: 0 0 0 8px;
 }
 
-.sleepchart-row-events {
+rowevents {
+    display: block;
     font-size: 12px;
     position: relative;
     flex: 1 1 auto;
     height: calc(100% - 8px);
 }
 
-.sleepchart-row-event {
+event {
+    display: block;
     position: absolute;
     height: 100%;
     margin: auto;
     color: white;
     cursor: pointer;
+    &.event-sleep {
+        display: inline-flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    &.event-food {
+        overflow: visible;
+        width: 1px;
+    }
+    &.event-sleep-estimate {
+        content: flex-end;
+        background: repeating-linear-gradient( 45deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1) 4px, rgba(255, 255, 255, 0.3) 4px, rgba(255, 255, 255, 0.3) 8px);
+    }
+    &.event-generic {
+        /**/
+    }
 }
 
-.sleepchart-row-event.mod-timeline {
+timeline {
+    color: white;
+    display: block;
+    position: absolute;
     top: -4px;
     left: -1px;
     height: calc(100% + 2px);
@@ -70,24 +77,17 @@
     overflow: visible;
 }
 
-.sleepchart-row-event.event-sleep {
-    display: inline-flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.sleepchart-row-event.event-food {
-    overflow: visible;
-    width: 1px;
-}
-
-.sleepchart-row-event.event-sleep-estimate {
-    content: flex-end;
-    background: repeating-linear-gradient( 45deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1) 4px, rgba(255, 255, 255, 0.3) 4px, rgba(255, 255, 255, 0.3) 8px);
-}
-
-.sleepchart-row-event.event-generic {
-    /**/
+timestamp {
+    display: block;
+    position: absolute;
+    padding: 3px 6px;
+    background-color: red;
+    border: 2px solid white;
+    text-align: center;
+    border-radius: 12px;
+    width: 48px;
+    left: -22px;
+    top: -8px;
 }
 
 .event-time {
@@ -124,7 +124,9 @@
     position: fixed;
 }
 
-.mod-hilight {}
+.mod-hilight {
+    /**/
+}
 
 .event-icon {
     position: absolute;

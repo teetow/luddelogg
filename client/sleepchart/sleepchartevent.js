@@ -23,7 +23,7 @@ Template.sleepchartEventEstimate.helpers({
         return {
             elapsedpos: this.left,
             elapsedwidth: nowPercentage - this.left,
-            color: this.color,
+            colorClass: this.colorClass,
             timelinepos: nowPercentage,
             left: nowPercentage,
             width: this.width - (nowPercentage - this.left),

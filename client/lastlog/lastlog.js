@@ -13,16 +13,21 @@ function renderEntries(logEntries) {
 }
 Template.lastlog.onCreated(function() {
     var instance = this;
-    var logSub = instance.subscribe("logToday", moment().toDate());
+    instance.lastlogData = new ReactiveVar({});
+    instance.getEntries = () => {
+        return renderEntries(instance.lastlogData.get().fetch());
+    };
+    instance.autorun(function() {
+        var logSub = instance.subscribe("logToday", moment().toDate(), function() {
+            instance.lastlogData.set(getToday(EventLog, moment().toDate()));
+            console.log("today fetched");
+        });
+    });
 });
 Template.lastlog.helpers({
     logEntryGroups: function() {
-        console.log("logentrygroups...");
-        console.log("event log contains " + EventLog.find().count());
-        var todayCursor = getToday(EventLog);
-        var todayLog = todayCursor.fetch();
-        var renderedEntries = renderEntries(todayLog);
-        return renderedEntries;
+        let instance = Template.instance();
+        return instance.getEntries();
     },
     logEntryTemplate: function() {
         switch (this.activity) {
