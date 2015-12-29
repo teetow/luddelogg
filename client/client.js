@@ -18,7 +18,9 @@ SetDocTitle("Luddelogg");
 DocHead.addMeta({name: "apple-mobile-web-app-capable",          content:"yes"});
 DocHead.addMeta({name: "apple-mobile-web-app-status-bar-style", content:"default"});
 DocHead.addMeta({name: "viewport",                              content:"width=device-width, initial-scale=1"});
-DocHead.addLink({rel:  "shortcut icon",                         href:"favicon/favicon.ico"});
+
+DocHead.addLink({rel: "stylesheet", href: "https://fonts.googleapis.com/css?family=Lato", type: "text/css"});
+DocHead.addLink({rel: "shortcut icon", href: "favicon/favicon.ico"});
 
 BlazeLayout.setRoot('body');
 /* beautify preserve:start */

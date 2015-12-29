@@ -26,7 +26,7 @@ Template.status.onCreated(function() {
     });
     instance.autorun(() => {
         // reactive doc title
-        if (instance.stateText.get()) SetDocTitle(`${instance.stateText.get()} - LuddeLogg`);
+        if (instance.stateText.get()) SetDocTitle(`${instance.stateText.get()} - Luddelogg`, "Status - Luddelogg");
     });
 });
 Template.status.onDestroyed(function() {
