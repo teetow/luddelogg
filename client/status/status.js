@@ -1,5 +1,5 @@
 Template.status.onCreated(function() {
-    var instance = this;
+    let instance = this;
     instance.state = new ReactiveVar();
     instance.todayEvents = function() {
         return getToday(EventLog, Session.get("now"));
@@ -11,51 +11,28 @@ Template.status.onCreated(function() {
     instance.autorun(function() {
         instance.state.set(getState(instance.todayEvents()));
     });
+    instance.stateText = new ReactiveVar();
+    instance.autorun(() => {
+        let state = instance.state.get();
+        let stateText = {};
+        if (state.lastState) {
+            stateText = `Ludvig is ${state.lastState}`;
+            if (state.lastState == SleepState.awake) 
+                stateText = `${stateText}!`;
+        } else {
+            stateText = "Ludvig is...";
+        }
+        instance.stateText.set(stateText);
+    });
+    instance.autorun(() => {
+        // reactive doc title
+        if (instance.stateText.get()) SetDocTitle(`${instance.stateText.get()} - LuddeLogg`);
+    });
 });
 Template.status.onDestroyed(function() {
     var instance = this;
     Meteor.clearInterval(instance.timer);
 });
-
-function getState(todayCollection) {
-    var todayEvents = todayCollection.fetch();
-    var state = {};
-    state.foodEvents = [];
-    state.totalSleep = moment.duration(0);
-    todayEvents.forEach(function(item) {
-        if (item.activity == "sleep") {
-            if (!state.lastSleep || item.timestamp > state.lastSleep.timestamp) {
-                state.lastSleep = item;
-            }
-            if (item.endtimestamp) {
-                var start = moment.utc(item.timestamp);
-                var end = moment.utc(item.endtimestamp);
-                var duration = moment.duration(end.diff(start));
-                state.totalSleep += duration;
-            }
-        } else if (item.activity == "food") {
-            state.foodEvents.push(item);
-            if (!state.lastFood || item.timestamp > state.lastFood.timestamp) {
-                state.lastFood = item;
-            }
-        }
-    });
-    if (state.lastSleep) {
-        state.lastState = "asleep";
-        state.lastTransition = state.lastSleep.timestamp;
-        state.lastAwake = undefined;
-        if (state.lastSleep.endtimestamp) {
-            state.lastState = "awake";
-            state.lastTransition = state.lastSleep.endtimestamp;
-            state.lastAwake = state.lastSleep.endtimestamp;
-        }
-    }
-    return state;
-}
-var stateIconLookup = {
-    awake: "status-state-icon-awake",
-    asleep: "status-state-icon-asleep"
-};
 Template.status.helpers({
     stateIconClass: function() {
         var state = Template.instance().state.get();
@@ -73,25 +50,14 @@ Template.status.helpers({
         }
     },
     stateText: function() {
-        var state = Template.instance().state.get();
-        if (state) {
-            var outputText;
-            var titleText;
-            if (state.lastState == "awake") {
-                outputText = "Ludvig is awake!";
-            }
-            else { 
-                outputText = "Ludvig is asleep";
-            }
-            document.title = outputText + " | Luddelogg";
-            return outputText;
-        }
+        let instance = Template.instance();
+        return instance.stateText.get();
     },
     stateTextTransition: function() {
         var state = Template.instance().state.get();
         if (state) {
             var outputText;
-            if (state.lastState == "awake") outputText = "Awake since ";
+            if (state.lastState == SleepState.awake) outputText = "Awake since ";
             else outputText = "Asleep since ";
             return outputText + moment(state.lastTransition).format("HH:mm");
         }
@@ -142,3 +108,48 @@ Template.status.helpers({
         return foodIcons;
     }
 });
+
+function getState(todayCollection) {
+    var todayEvents = todayCollection.fetch();
+    var state = {};
+    state.foodEvents = [];
+    state.totalSleep = moment.duration(0);
+    todayEvents.forEach(function(item) {
+        if (item.activity == "sleep") {
+            if (!state.lastSleep || item.timestamp > state.lastSleep.timestamp) {
+                state.lastSleep = item;
+            }
+            if (item.endtimestamp) {
+                var start = moment.utc(item.timestamp);
+                var end = moment.utc(item.endtimestamp);
+                var duration = moment.duration(end.diff(start));
+                state.totalSleep += duration;
+            }
+        } else if (item.activity == "food") {
+            state.foodEvents.push(item);
+            if (!state.lastFood || item.timestamp > state.lastFood.timestamp) {
+                state.lastFood = item;
+            }
+        }
+    });
+    if (state.lastSleep) {
+        state.lastState = SleepState.asleep;
+        state.lastTransition = state.lastSleep.timestamp;
+        state.lastAwake = undefined;
+        if (state.lastSleep.endtimestamp) {
+            state.lastState = SleepState.awake;
+            state.lastTransition = state.lastSleep.endtimestamp;
+            state.lastAwake = state.lastSleep.endtimestamp;
+        }
+    }
+    return state;
+}
+var SleepState = {
+    "undefined": undefined,
+    "awake": "awake",
+    "asleep": "asleep",
+}
+var stateIconLookup = {
+    awake: "status-state-icon-awake",
+    asleep: "status-state-icon-asleep"
+};

@@ -23,6 +23,7 @@ reactive-dict
 aldeed:moment-timezone
 kadira:blaze-layout
 kadira:flow-router
+kadira:dochead
 lauricio:less-autoprefixer
 manuelschoebel:wait-on-lib
 meteorhacks:aggregate

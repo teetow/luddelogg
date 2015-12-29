@@ -1,67 +1,37 @@
+/* beautify preserve:start */
+let optionsDefaults = {
+    showstarttimes: { label: "Starts",    type: "checkbox", value: true,  },
+    showdurations:  { label: "Durations", type: "checkbox", value: false, },
+    showendtimes:   { label: "Ends",      type: "checkbox", value: true,  },
+};
+/* beautify preserve:end */
 Template.sleepchart.onCreated(function() {
     var instance = this;
+    instance.options = new ReactiveVar(optionsDefaults);
+    instance.chartPrefs = {
+        getPref: function(activity, label, pref) {
+            let foundPref = this["default"][pref];
+            if (this[activity]) {
+                foundPref = this[activity]["default"][pref];
+                if (this[activity][label]) {
+                    foundPref = this[activity][label][pref];
+                }
+            }
+            return foundPref;
+        },
+        /* beautify preserve:start */
+        "default": {    colorClass: "color-default",        estimate: "00:30", },
+        "sleep": {
+            "default": {colorClass: "color-sleep-default",  estimate: "01:00", },
+            "nap 1":   {colorClass: "color-sleep-nap1",     estimate: "02:00", },
+            "nap 2":   {colorClass: "color-sleep-nap2",     estimate: "01:30", },
+            "night":   {colorClass: "color-sleep-night",    estimate: "10:30", },
+        },
+        /* beautify preserve:end */
+    };
     instance.chartdata = new ReactiveVar({});
     instance.sleepData = function() {
-        var chartdata = instance.chartdata.get();
-        var sleepEvents = instance.events().fetch();
-        var groupedSleepEvents = _.groupBy(sleepEvents, "date");
-        _.each(groupedSleepEvents, function(events) {
-            _.each(events, function(event) {
-                var timestamp = moment(event.timestamp);
-                var startOfDay = moment(event.date, "YYYY-MM-DD");
-                var elapsedTime = +timestamp.diff(startOfDay);
-                if (!chartdata.lowerBound || elapsedTime < chartdata.lowerBound) {
-                    chartdata.lowerBound = elapsedTime;
-                }
-                if (!event.endtimestamp) return;
-                var endtimestamp = moment(event.endtimestamp);
-                var elapsedEndTime = +endtimestamp.diff(startOfDay);
-                if (!chartdata.upperBound || elapsedEndTime > chartdata.upperBound) {
-                    chartdata.upperBound = elapsedEndTime;
-                }
-            });
-        });
-        chartdata.range = chartdata.upperBound - chartdata.lowerBound;
-        var sleepRows = [];
-        _.each(groupedSleepEvents, function(dateGroup, date) {
-            var sleepRow = [];
-            _.each(dateGroup, function(dateEvent) {
-                var startOfDay = moment(dateEvent.date, "YYYY-MM-DD");
-                var start = +moment(dateEvent.timestamp).diff(startOfDay);
-                var duration;
-                var isEstimate;
-                if (dateEvent.duration) {
-                    duration = moment.duration(dateEvent.duration, "HH:mm");
-                } else {
-                    duration = moment.duration(instance.chartPrefs.getPref(dateEvent.activity, dateEvent.label, "estimate"), "HH:mm");
-                    isEstimate = true;
-                }
-                var positionPercentage = ((start - +chartdata.lowerBound) / chartdata.range) * 100;
-                var widthPercentage = (duration) ? (duration.asMilliseconds() / chartdata.range) * 100 : undefined;
-                var row = {
-                    // stupid, but I'm lazy
-                    chartinfo: {
-                        startOfDay: startOfDay,
-                        lowerBound: chartdata.lowerBound,
-                        upperBound: chartdata.upperBound,
-                        range: chartdata.range,
-                    },
-                    data: dateEvent,
-                    left: positionPercentage,
-                    width: widthPercentage ? widthPercentage : undefined,
-                    colorClass: instance.chartPrefs.getPref(dateEvent.activity, dateEvent.label, "colorClass"),
-                    duration: (duration) ? duration.hours() + "h" + duration.minutes() + "m" : undefined,
-                    estimate: (isEstimate) ? true : undefined
-                };
-                sleepRow.push(row);
-            });
-            sleepRows.push({
-                date: date,
-                chartdata: chartdata,
-                sleepchartEvents: sleepRow,
-            });
-        });
-        return sleepRows;
+        return getSleepData(instance);
     };
     instance.numDays = 7;
     instance.limit = new ReactiveVar(instance.numDays);
@@ -72,7 +42,6 @@ Template.sleepchart.onCreated(function() {
             days: limit
         }, function() {
             instance.numFetched.set(EventLog.find().count());
-            console.log("subscribe");
         });
     })
     instance.events = function() {
@@ -83,75 +52,27 @@ Template.sleepchart.onCreated(function() {
             limit: instance.numFetched.get()
         });
     };
-    this.options = new ReactiveVar({
-        showstarttimes: {
-            label: "Starts",
-            type: "checkbox",
-            value: true,
-        },
-        showdurations: {
-            label: "Durations",
-            type: "checkbox",
-            value: false,
-        },
-        showendtimes: {
-            label: "Ends",
-            type: "checkbox",
-            value: true,
-        },
-    });
-    instance.chartPrefs = {
-        getPref: function(activity, label, pref) {
-            var foundPref = this["default"][pref];
-            if (this[activity]) {
-                foundPref = this[activity]["default"][pref];
-                if (this[activity][label]) {
-                    foundPref = this[activity][label][pref];
-                }
-            }
-            return foundPref;
-        },
-        "default": {
-            colorClass: "color-default",
-            estimate: "00:30",
-        },
-        "sleep": {
-            "default": {
-                colorClass: "color-sleep-default",
-                estimate: "01:00",
-            },
-            "nap 1": {
-                colorClass: "color-sleep-nap1",
-                estimate: "02:00",
-            },
-            "nap 2": {
-                colorClass: "color-sleep-nap2",
-                estimate: "01:30",
-            },
-            "night": {
-                colorClass: "color-sleep-night",
-                estimate: "10:30",
-            },
-        },
-    };
+    SetDocTitle("Sleepchart - Luddelogg");
 });
 Template.sleepchart.onRendered(function() {
-    var instance = this;
+    let instance = this;
     Session.set("now", moment().toISOString());
-    instance.secondTimer = Meteor.setInterval(function() {
+    instance.secondTimer = Meteor.setInterval(() => {
         Session.set("now", moment().toISOString());
     }, 30000);
 });
 Template.sleepchart.onDestroyed(function() {
-    var instance = this;
-    if (instance.secondTimer) instance.clearInterval(instance.secondTimer);
+    let instance = this;
+    if (instance.secondTimer) {
+        instance.clearInterval(instance.secondTimer);
+    }
 });
 Template.sleepchart.helpers({
     options: function() {
-        var options = Template.instance().options.get();
-        var keys = _.keys(options);
-        var optionsArray = [];
-        keys.forEach(function(item, index, array) {
+        let options = Template.instance().options.get();
+        let keys = _.keys(options);
+        let optionsArray = [];
+        keys.forEach((item, index, array) => {
             optionsArray.push({
                 name: item,
                 label: options[item].label,
@@ -169,18 +90,18 @@ Template.sleepchart.helpers({
         return "sleepchartOptionGeneric";
     },
     sleepRows: function() {
-        var instance = Template.instance();
+        let instance = Template.instance();
         return instance.sleepData();
     },
     loadMore: function() {
-        var instance = Template.instance();
+        let instance = Template.instance();
         return instance.events().count() >= instance.numFetched.get();
     }
 });
 Template.sleepchart.events({
     "mouseenter .sleepchart-row-event": function(e, tpl) {
         $(e.currentTarget).addClass("mod-hilight");
-        var targetDiv = $(e.currentTarget);
+        let targetDiv = $(e.currentTarget);
         Session.set("tooltipInfo", {
             pos: {
                 left: (targetDiv.offset().left - $(window).scrollLeft()) + (targetDiv.outerWidth() / 2) - 18 + "px",
@@ -194,11 +115,74 @@ Template.sleepchart.events({
         Session.set("tooltipInfo", undefined);
     },
     "click .js-loadmore": function() {
-        var instance = Template.instance();
-        var limit = instance.limit.get() + instance.numDays;
+        let instance = Template.instance();
+        let limit = instance.limit.get() + instance.numDays;
         instance.limit.set(limit);
     },
     "click .js-loadall": function() {
         Template.instance().limit.set(0);
     },
 });
+
+function getSleepData(instance) {
+    let chartdata = instance.chartdata.get();
+    let sleepEvents = instance.events().fetch();
+    let groupedSleepEvents = _.groupBy(sleepEvents, "date");
+    _.each(groupedSleepEvents, function(events) {
+        _.each(events, function(event) {
+            let timestamp = moment(event.timestamp);
+            let startOfDay = moment(event.date, "YYYY-MM-DD");
+            let elapsedTime = +timestamp.diff(startOfDay);
+            if (!chartdata.lowerBound || elapsedTime < chartdata.lowerBound) {
+                chartdata.lowerBound = elapsedTime;
+            }
+            if (!event.endtimestamp) return;
+            let endtimestamp = moment(event.endtimestamp);
+            let elapsedEndTime = +endtimestamp.diff(startOfDay);
+            if (!chartdata.upperBound || elapsedEndTime > chartdata.upperBound) {
+                chartdata.upperBound = elapsedEndTime;
+            }
+        });
+    });
+    chartdata.range = chartdata.upperBound - chartdata.lowerBound;
+    let sleepRows = [];
+    _.each(groupedSleepEvents, function(dateGroup, date) {
+        let sleepRow = [];
+        _.each(dateGroup, function(dateEvent) {
+            let startOfDay = moment(dateEvent.date, "YYYY-MM-DD");
+            let start = +moment(dateEvent.timestamp).diff(startOfDay);
+            let duration;
+            let isEstimate;
+            if (dateEvent.duration) {
+                duration = moment.duration(dateEvent.duration, "HH:mm");
+            } else {
+                duration = moment.duration(instance.chartPrefs.getPref(dateEvent.activity, dateEvent.label, "estimate"), "HH:mm");
+                isEstimate = true;
+            }
+            let positionPercentage = ((start - +chartdata.lowerBound) / chartdata.range) * 100;
+            let widthPercentage = (duration) ? (duration.asMilliseconds() / chartdata.range) * 100 : undefined;
+            let row = {
+                // stupid, but I'm lazy
+                chartinfo: {
+                    startOfDay: startOfDay,
+                    lowerBound: chartdata.lowerBound,
+                    upperBound: chartdata.upperBound,
+                    range: chartdata.range,
+                },
+                data: dateEvent,
+                left: positionPercentage,
+                width: widthPercentage ? widthPercentage : undefined,
+                colorClass: instance.chartPrefs.getPref(dateEvent.activity, dateEvent.label, "colorClass"),
+                duration: (duration) ? duration.hours() + "h" + duration.minutes() + "m" : undefined,
+                estimate: (isEstimate) ? true : undefined
+            };
+            sleepRow.push(row);
+        });
+        sleepRows.push({
+            date: date,
+            chartdata: chartdata,
+            sleepchartEvents: sleepRow,
+        });
+    });
+    return sleepRows;
+}

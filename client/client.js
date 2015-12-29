@@ -13,6 +13,14 @@ InputReady = new ReactiveVar(false);
 Template.registerHelper("makeDuration", function(duration) {
     return makeDuration(duration);
 });
+
+SetDocTitle("Luddelogg");
+DocHead.addMeta({name: "apple-mobile-web-app-capable",          content:"yes"});
+DocHead.addMeta({name: "apple-mobile-web-app-status-bar-style", content:"default"});
+DocHead.addMeta({name: "viewport",                              content:"width=device-width, initial-scale=1"});
+DocHead.addLink({rel:  "shortcut icon",                         href:"favicon/favicon.ico"});
+
+BlazeLayout.setRoot('body');
 /* beautify preserve:start */
 FlowRouter.route("/",           {action: function(params) {BlazeLayout.render("mainLayout", {content: "dashboard" }); } });
 FlowRouter.route("/dashboard",  {action: function(params) {BlazeLayout.render("mainLayout", {content: "dashboard" }); } });
@@ -22,6 +30,7 @@ FlowRouter.route("/input",      {action: function(params) {BlazeLayout.render("m
 FlowRouter.route("/db",         {action: function(params) {BlazeLayout.render("mainLayout", {content: "db"        }); } });
 FlowRouter.route("/status",     {action: function(params) {BlazeLayout.render("mainLayout", {content: "status"    }); } });
 /* beautify preserve:end */
+
 Meteor.methods({
     addMessage: function(message) {
         AddMessage(message, "addMessage Meteor method");
@@ -38,17 +47,6 @@ Meteor.methods({
     dbAddEntry: function(newLogInfo) {},
 });
 
-function loadChartPackages(packages) {
-    Session.set('googleLoaded', false);
-    google.load('visualization', '1', {
-        packages: packages,
-        callback: function() {
-            var s = (packages.length > 1) ? "s" : "";
-            console.log("package" + s + " loaded: " + packages.toString());
-            Session.set('googleLoaded', true);
-        }
-    });
-}
 // extend Blaze.View prototype to mimick jQuery's closest for views
 _.extend(Blaze.View.prototype, {
     closest: function(viewName) {

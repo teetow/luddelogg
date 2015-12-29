@@ -3,6 +3,7 @@ Template.db.onCreated(function() {
     this.autorun(function() {
         instance.subscribe("dbMessageLog");
     });
+    SetDocTitle("DB - Luddelogg");
 });
 Template.db.helpers({
     messages: function() {
