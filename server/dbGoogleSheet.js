@@ -1,176 +1,134 @@
-var sheetHandle;
-var sheetIsLoading;
-var sheetLoadHandle;
-var sheetPollHandle;
-var isSyncing;
 Meteor.startup(function() {
     ClearMessages();
-    Meteor.call("dbLoadSheet");
-    Meteor.call("dbStartSyncSheet");
+    AddMessage("Starting up.---------------------------------------------------", "Meteor.startup");
+    initSheetLoader();
+    EventLog._ensureIndex({
+        id: 1
+    }, {
+        unique: true
+    });
 });
 Meteor.methods({
-    dbLoadSheet: function() {
-        AddMessage("loading sheet...", "dbLoadSheet");
-        loadSheet();
+    dbLoadSheetData: () => {
+        loadSheetData();
     },
-    IsSheetReady: function() {
-        return (sheetHandle === undefined);
-    },
-    dbStartSyncSheet: function() {
-        AddMessage("Starting sync...", "dbStartSyncSheet");
-        if (!sheetLoadHandle) sheetLoadHandle = Meteor.setInterval(loadSheet, 3000000); // login every 50 minutes
-        if (!sheetPollHandle) sheetPollHandle = Meteor.setInterval(fetchSheetData, 30000); // get sheet every 30 seconds
-    },
-    dbStopSyncSheet: function() {
-        AddMessage("Stopping sync...", "dbStopSyncSheet");
-        if (sheetPollHandle) {
-            Meteor.clearInterval(sheetPollHandle);
-            sheetPollHandle = undefined;
-        }
-    },
-    dbIsSyncing: function() {
-        if (sheetPollHandle) {
-            return true;
-        }
-        return false;
-    },
-    dbClearData: function() {
+    dbClearData: () => {
         AddMessage("Clearing eventlog.", "dbClearData");
         EventLog.remove({});
     },
-    dbGetData: function() {
-        if (!sheetHandle) {
-            AddMessage("Loading sheet before getting data.", "dbGetData");
-            Meteor.call("dbLoadSheet");
-        }
-        try {
-            AddMessage("Getting sheet data...", "dbGetData");
-            fetchSheetData();
-        } catch (err) {
-            AddMessage(err, "dbGetData");
-        }
-    },
-    dbAddEntry: function(newLogInfo) {},
 });
 
-function loadSheet() {
-    sheetIsLoading = true;
-    var spreadsheet = Meteor.npmRequire('edit-google-spreadsheet');
-    var spreadsheetLoaderOptions = JSON.parse(Assets.getText("luddelogg-auth.json"));
-    var spreadsheetLoader = Meteor.wrapAsync(spreadsheet.load, spreadsheet);
-    spreadsheetLoader(spreadsheetLoaderOptions, function(err, spreadsheet) {
+let SheetLoaderHandle;
+let SheetHandle;
+let spreadsheetLoaderOptions;
+let SheetLoginHandle;
+let SheetLoginTimer;
+let SheetSyncTimer;
+
+function initSheetLoader() {
+    AddMessage("Initializing sheet loader.", "initSheetLoader");
+    SheetLoaderHandle = Meteor.npmRequire('edit-google-spreadsheet');
+    spreadsheetLoaderOptions = JSON.parse(Assets.getText("luddelogg-auth.json"));
+    if (!SheetSyncTimer)
+        SheetSyncTimer = Meteor.setTimeout(loadSheetData, 30000); // wait 30s before syncing
+}
+
+function loadSheetData() {
+    AddMessage("Loading...", "loadSheetData");
+    let wrapSpreadsheetLoad = Meteor.wrapAsync(SheetLoaderHandle.load, SheetLoaderHandle);
+    wrapSpreadsheetLoad(spreadsheetLoaderOptions, function(err, sheetHandle) {
         if (err) {
             AddMessage(err, "loadSheet");
             throw err;
-        } else {
-            AddMessage("sheet loaded.", "loadSheet");
-            sheetHandle = spreadsheet;
-            sheetIsLoading = false;
         }
+        SheetHandle = sheetHandle;
+        fetchSheetData();
+        if (!SheetLoginTimer)
+            SheetLoginTimer = Meteor.setTimeout(loadSheetData, 3000000); // login every 50 minutes
     });
 }
 
 function fetchSheetData() {
-    if (!sheetHandle) {
+    if (!SheetHandle) {
         throw "Cannot fetch Google sheet -- Sheet not loaded.";
     }
-    if (isSyncing) {
-        throw "Already syncing -- aborting fetch.";
+    if (isSyncing("fetchSheetData")) {
+        let message = "Aborted fetch -- already syncing.";
+        AddMessage(message, "fetchSheetData");
+        throw message;
     }
-    var importSheetDataFunc = Meteor.wrapAsync(sheetHandle.receive, sheetHandle);
+    AddMessage("Requesting sheet data...", "fetchSheetData");
+    startSync("fetchSheetData");
+    var importSheetDataFunc = Meteor.wrapAsync(SheetHandle.receive, SheetHandle);
     importSheetDataFunc({
         getValues: true
     }, importAndParseSheetData);
 }
 
 function importAndParseSheetData(err, row, info) {
-    importSheetData(err, row, info);
-    parseSheetData();
+    AddMessage("Importing sheet data...", "importAndParseSheetData");
+    try {
+        parseSheetData(err, row, info);
+    } catch (e) {
+        AddMessage(JSON.stringify(e), "importAndParseSheetData");
+    }
+    stopSync("importAndParseSheetData");
+    if (!SheetSyncTimer)
+        SheetSyncTimer = Meteor.setTimeout(fetchSheetData, 30000); // wait 30 seconds, then fetch again
 }
 
-function importSheetData(err, rows, info) {
+function parseSheetData(err, rows, info) {
     if (err) {
-        AddMessage(err, "importSheetData");
         throw err;
     }
-    if (isSyncing) {
-        AddMessage("Aborted import -- already syncing.", "importSheetData");
-        throw "Already syncing -- aborting import.";
-    }
-    isSyncing = true;
-    SheetData.remove({});
     var data = _.values(rows);
     var numRows = data.length;
     var reportEvery = 100;
-    data.forEach(function(rowitem, rowindex, rowarray) {
+    data.forEach(function(sheetRow, rowindex, rowarray) {
         var numRowsImported = rowindex + 1;
         if (numRowsImported % reportEvery == 0 || numRowsImported == numRows) {
-            AddMessage("Imported " + (numRowsImported) + " of " + numRows + " rows.", "importSheetData");
+            AddMessage("Imported " + (numRowsImported) + " of " + numRows + " rows.", "parseSheetData");
             reportEvery = reportEvery * 3;
         }
         var rowObject = {
-            time: rowitem[1],
-            end: rowitem[2],
-            activity: rowitem[3],
-            label: rowitem[4],
-            amount: rowitem[5],
-            score: rowitem[6],
-            date: rowitem[7],
-            timestamp: rowitem[8],
-            endtimestamp: rowitem[9],
-            id: rowitem[10],
+            time: sheetRow[1],
+            end: sheetRow[2],
+            activity: sheetRow[3],
+            label: sheetRow[4],
+            amount: sheetRow[5],
+            score: sheetRow[6],
+            date: sheetRow[7],
+            timestamp: sheetRow[8],
+            endtimestamp: sheetRow[9],
+            id: sheetRow[10],
         };
-        SheetData.insert(rowObject);
-    });
-    isSyncing = false;
-}
-
-function parseSheetData() {
-    if (isSyncing) {
-        AddMessage("Aborted parse -- already syncing.", "parseSheetData");
-        throw "Already syncing -- aborting parse.";
-    }
-    isSyncing = true;
-    var data = SheetData.find({}, {
-        sort: {
-            id: 1
-        }
-    }).fetch();
-    var numRows = data.length;
-    var reportEvery = 100;
-    data.forEach(function(rowitem, rowindex, rowarray) {
-        var numRowsImported = rowindex + 1;
-        if (numRowsImported % reportEvery == 0 || numRowsImported == numRows) {
-            AddMessage("Processed " + numRowsImported + " of " + numRows + " rows.", "parseSheetData");
-            reportEvery = reportEvery * 3;
-        }
         // skip on incomplete data
-        if (!rowitem.activity || !rowitem.time || !rowitem.date) {
+        if (!rowObject.activity || !rowObject.time || !rowObject.date) {
             return;
         }
         // stupid validity checking
-        var dateSanityCheck = Date.parse(rowitem.timestamp);
+        var dateSanityCheck = Date.parse(rowObject.timestamp);
         if (isNaN(dateSanityCheck)) return;
-        var parsedTimestamp = moment.tz(rowitem.timestamp, "Europe/Stockholm");
+        var parsedTimestamp = moment.tz(rowObject.timestamp, "Europe/Stockholm");
         if (!parsedTimestamp.isValid()) {
-            AddMessage("Skipped row " + rowitem.id + " -- " + parsedTimestamp + " is an invalid timestamp.", "parseSheetData");
+            AddMessage("Skipped row " + rowObject.id + " -- " + parsedTimestamp + " is an invalid timestamp.", "parseSheetData");
             return;
         }
         var timestampDate = new Date(parsedTimestamp);
         var logEntry = {
-            activity: rowitem.activity,
-            label: rowitem.label,
-            amount: rowitem.amount,
-            score: rowitem.score,
-            time: rowitem.time,
-            end: rowitem.end,
-            date: rowitem.date,
+            activity: rowObject.activity,
+            label: rowObject.label,
+            amount: rowObject.amount,
+            score: rowObject.score,
+            time: rowObject.time,
+            end: rowObject.end,
+            date: rowObject.date,
             timestamp: timestampDate,
             timestampformatted: moment(timestampDate).format("ddd MMM DD, YYYY"),
-            id: rowitem.id,
+            id: rowObject.id,
         };
-        if (rowitem.endtimestamp) {
-            var parsedEndTimestamp = moment.tz(rowitem.endtimestamp, "Europe/Stockholm");
+        if (rowObject.endtimestamp) {
+            var parsedEndTimestamp = moment.tz(rowObject.endtimestamp, "Europe/Stockholm");
             if (parsedEndTimestamp.isValid()) {
                 logEntry.endtimestamp = new Date(parsedEndTimestamp);
                 logEntry.duration = moment.utc(logEntry.endtimestamp - logEntry.timestamp).format("HH:mm");
@@ -182,20 +140,18 @@ function parseSheetData() {
             upsert: true
         });
     });
-    isSyncing = false;
+}
+let syncStatus = new ReactiveVar(false);
+
+function startSync(origin) {
+    syncStatus.set(true);
 }
 
-function sendLogEntry(row, newLogEntry) {
-    var newLogEntryBuilder = {};
-    newLogEntryBuilder[row] = newLogEntry;
-    sheetHandle.add(newLogEntryBuilder);
-    console.log(newLogEntryBuilder);
-    sheetHandle.send({
-        autoSize: true
-    }, function(err) {
-        if (err) {
-            AddMessage(err, "sendLogEntry");
-            throw err;
-        }
-    });
+function stopSync(origin) {
+    syncStatus.set(false);
+}
+
+function isSyncing(origin) {
+    let rslt = syncStatus.get();
+    return rslt;
 }

@@ -38,14 +38,10 @@ Meteor.methods({
         AddMessage(message, "addMessage Meteor method");
     },
     clearMessages: function() {},
-    dbLoadSheet: function() {},
-    dbStartSyncSheet: function() {},
-    dbStopSyncSheet: function() {},
-    dbIsSyncing: function() {},
     dbClearData: function() {
         EventLog.remove({});
     },
-    dbGetData: function() {},
+    dbFetchSheetData: function() {},
     dbAddEntry: function(newLogInfo) {},
 });
 

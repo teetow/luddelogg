@@ -10,9 +10,11 @@ Meteor.methods({
 	},
 });
 AddMessage = function(message, origin) {
+	let timestamp = new Date();
+	console.log(`${origin}: ${message}`);
 	MessageLog.insert({
 		message: message,
-		timestamp: new Date(),
+		timestamp: timestamp,
 		origin: origin
 	});
 	PurgeOldMessages();

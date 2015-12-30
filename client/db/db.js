@@ -19,7 +19,7 @@ Template.db.helpers({
 });
 Template.db.events({
     'click .js-syncnow': function(event, instance) {
-        Meteor.call("dbGetData");
+        Meteor.call("dbLoadSheetData");
     },
     'click .js-clear': function(event, instance) {
         Meteor.call("dbClearData");

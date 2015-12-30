@@ -1,24 +1,22 @@
 Template.input.onCreated(function() {
-    var eventData = this.eventData = new Mongo.Collection(null);
-    this.setEventProp = function(attribute, value) {
+    let instance = this;
+    instance.eventData = new Mongo.Collection(null);
+    instance.setEventProp = function(attribute, value) {
         var currentEventData = eventData.findOne();
         if (currentEventData) {
             currentEventData[attribute] = value;
-            eventData.upsert(currentEventData._id, currentEventData);
+            instance.eventData.upsert(currentEventData._id, currentEventData);
         } else {
             var newData = {};
             newData[attribute] = value;
-            eventData.insert(newData);
+            instance.eventData.insert(newData);
         }
     };
-    var sheetReady = this.sheetReady = new ReactiveVar(false);
-    Meteor.call("isSheetReady", function(err, result) {
-        sheetReady.set(true);
-    });
+    instance.sheetReady = new ReactiveVar(true); //fix later
 });
 Template.input.helpers({
     sheetReady: function() {
-        return Template.instance().sheetReady;
+        return Template.instance().sheetReady.get();
     },
     eventData: function() {
         return Template.instance().eventData.findOne();

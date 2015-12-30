@@ -1,38 +1,43 @@
 Template.status.onCreated(function() {
+
     let instance = this;
-    instance.state = new ReactiveVar();
-    instance.todayEvents = function() {
-        return getToday(EventLog, Session.get("now"));
-    };
-    instance.timer = Meteor.setInterval(function() {
+
+    instance.subscribe("logToday");
+    instance.timer = Meteor.setInterval(() => {
         Session.set("now", moment().toDate());
     }, 1000);
-    instance.subscribe("logToday", Session.get("now"));
-    instance.autorun(function() {
-        instance.state.set(getState(instance.todayEvents()));
+
+    instance.state = new ReactiveVar();
+    instance.autorun(() => {
+        let events = getToday(EventLog, Session.get("now")).fetch();
+        instance.state.set(getState(events));
     });
+
     instance.stateText = new ReactiveVar();
     instance.autorun(() => {
         let state = instance.state.get();
         let stateText = {};
-        if (state.lastState) {
+        if (state && state.lastState) {
             stateText = `Ludvig is ${state.lastState}`;
-            if (state.lastState == SleepState.awake) 
-                stateText = `${stateText}!`;
+            if (state.lastState == SleepState.awake) stateText = `${stateText}!`;
         } else {
             stateText = "Ludvig is...";
         }
         instance.stateText.set(stateText);
     });
+
     instance.autorun(() => {
-        // reactive doc title
-        if (instance.stateText.get()) SetDocTitle(`${instance.stateText.get()} - Luddelogg`, "Status - Luddelogg");
+        if (instance.stateText.get()) {
+            SetDocTitle(`${instance.stateText.get()} - Luddelogg`, "Status - Luddelogg");
+        }
     });
 });
+
 Template.status.onDestroyed(function() {
     var instance = this;
     Meteor.clearInterval(instance.timer);
 });
+
 Template.status.helpers({
     stateIconClass: function() {
         var state = Template.instance().state.get();
@@ -109,8 +114,7 @@ Template.status.helpers({
     }
 });
 
-function getState(todayCollection) {
-    var todayEvents = todayCollection.fetch();
+function getState(todayEvents) {
     var state = {};
     state.foodEvents = [];
     state.totalSleep = moment.duration(0);

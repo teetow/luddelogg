@@ -1,33 +1,16 @@
-function renderEntries(logEntries) {
-    var groupedEntries = [];
-    $.each(_.groupBy(logEntries, "date"), function(date, entries) {
-        var fmtDate = moment(date).format("MMMM Do YYYY");
-        var fmtWeekday = moment(date).format("dddd");
-        groupedEntries.push({
-            date: fmtDate,
-            dateWeekday: fmtWeekday,
-            logentries: entries
-        });
-    });
-    return groupedEntries;
-}
 Template.lastlog.onCreated(function() {
     var instance = this;
-    instance.lastlogData = new ReactiveVar({});
-    instance.getEntries = () => {
-        return renderEntries(instance.lastlogData.get().fetch());
-    };
-    instance.autorun(function() {
-        var logSub = instance.subscribe("logToday", moment().toDate(), function() {
-            instance.lastlogData.set(getToday(EventLog, moment().toDate()));
-            console.log("today fetched");
-        });
+    instance.subscribe("logToday");
+    instance.renderedEntries = new ReactiveVar();
+    instance.autorun(() => {
+        let events = getToday(EventLog, moment().toDate()).fetch();
+        instance.renderedEntries.set(renderEntries(events));
     });
 });
 Template.lastlog.helpers({
     logEntryGroups: function() {
         let instance = Template.instance();
-        return instance.getEntries();
+        return instance.renderedEntries.get();
     },
     logEntryTemplate: function() {
         switch (this.activity) {
@@ -51,3 +34,17 @@ Template.lastlog.helpers({
         return logicons;
     }
 });
+
+function renderEntries(logEntries) {
+    var groupedEntries = [];
+    $.each(_.groupBy(logEntries, "date"), function(date, entries) {
+        var fmtDate = moment(date).format("MMMM Do YYYY");
+        var fmtWeekday = moment(date).format("dddd");
+        groupedEntries.push({
+            date: fmtDate,
+            dateWeekday: fmtWeekday,
+            logentries: entries
+        });
+    });
+    return groupedEntries;
+}
