@@ -5,10 +5,13 @@
         {{/each}}
     </div>
     <sleepchart>
+    {{#if Template.subscriptionsReady}}
         {{#each sleepRows}}
             {{> sleepchartRow}}
         {{/each}}
-
+    {{else}}
+        {{{placeholder}}}
+    {{/if}}
     </sleepchart>
     {{#if Template.subscriptionsReady}}
         {{#if loadMore}}

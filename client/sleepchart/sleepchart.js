@@ -53,6 +53,7 @@ Template.sleepchart.onCreated(function() {
         });
     };
     SetDocTitle("Sleepchart - Luddelogg");
+    instance.placeholder = new ReactiveVar();
 });
 Template.sleepchart.onRendered(function() {
     let instance = this;
@@ -63,10 +64,12 @@ Template.sleepchart.onRendered(function() {
     instance.$("sleepchart").tooltip({
         position: {
             my: "bottom",
-            at: "center",
+            at: "top",
             collision: "flipfit",
         },
-        tooltipClass: "ui__tooltip-sleepchart"
+        show: false,
+        hide: false,
+        tooltipClass: "ui__tooltip-sleepchart",
     });
 });
 Template.sleepchart.onDestroyed(function() {
@@ -104,7 +107,11 @@ Template.sleepchart.helpers({
     loadMore: function() {
         let instance = Template.instance();
         return instance.events().count() >= instance.numFetched.get();
-    }
+    },
+    placeholder: () => {
+        let instance = Template.instance();
+        return instance.placeholder.get();
+    },
 });
 Template.sleepchart.events({
     "click .js-loadmore": function() {
@@ -113,6 +120,9 @@ Template.sleepchart.events({
         instance.limit.set(limit);
     },
     "click .js-loadall": function() {
+        let instance = Template.instance();
+        let html = instance.$("sleepchart").html();
+        instance.placeholder.set(html);
         Template.instance().limit.set(0);
     },
 });

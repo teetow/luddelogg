@@ -1,6 +1,6 @@
 <template name="sleepchartRow">
-    <sleeprow class="{{#if isWeekend}}mod-weekend{{/if}} {{#if isToday}}mod-today{{/if}}" title="{{rowtooltip}}">
-        <rowheader>{{shortdate date}}</rowheader>
+    <sleeprow class="{{#if isWeekend}}mod-weekend{{/if}} {{#if isToday}}mod-today{{/if}}">
+        <rowheader title="{{rowtooltip}}">{{shortdate date}}</rowheader>
         <rowevents>
             {{#each sleepchartEvents}}
                 {{> Template.dynamic template=sleepchartEventTemplate}}

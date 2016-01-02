@@ -35,36 +35,71 @@ rowevents {
     font-size: 12px;
     position: relative;
     flex: 1 1 auto;
-    height: calc(100% - 8px);
+    height: calc(~"100% - 8px");
 }
 
 event {
-    display: block;
-    position: absolute;
-    height: 100%;
-    margin: auto;
-    color: white;
+    color: hsl(0, 100%, 100%);
     cursor: pointer;
+    display: block;
+    height: 12px;
+    position: absolute;
+    top: calc(50% - 6px);
+    width: 12px;
     &.event-sleep {
+        height: 100%;
+        top: 0;
         display: inline-flex;
         justify-content: space-between;
         align-items: center;
     }
     &.event-food {
         overflow: visible;
-        width: 1px;
     }
     &.event-sleep-estimate {
         justify-content: flex-end;
         background-image: repeating-linear-gradient( 45deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1) 4px, rgba(255, 255, 255, 0.3) 4px, rgba(255, 255, 255, 0.3) 8px);
     }
     &.event-generic {
-        width: 10px;
         background-color: hsl(14, 100%, 57%);
-        height: 10px;
-        margin: 16px 0;
         border-radius: 50%;
+        height: 12px;
+        width: 12px;
     }
+}
+
+.event-icon {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background-position: 50%;
+    background-size: 16px;
+    background-repeat: no-repeat;
+    pointer-events: none;
+}
+
+.event-icon-bottle {
+    background-image: url("food-bottle.svg");
+}
+
+.event-icon-meal {
+    background-image: url("food-meal.svg");
+}
+
+.event-icon-oatmeal {
+    background-image: url("food-oatmeal.svg");
+}
+
+.event-icon-sandwich {
+    background-image: url("food-sandwich.svg");
+}
+
+.event-icon-fruit {
+    background-image: url("food-fruit.svg");
+}
+
+.event-icon-drops {
+    background-image: url("drops.svg");
 }
 
 timeline {
@@ -123,40 +158,6 @@ timestamp {
 
 .mod-hilight {
     /**/
-}
-
-.event-icon {
-    position: absolute;
-    width: 16px;
-    height: 100%;
-    background-position: 50%;
-    background-size: 16px;
-    background-repeat: no-repeat;
-    right: -8px;
-}
-
-.event-icon-bottle {
-    background-image: url("food-bottle.svg");
-}
-
-.event-icon-meal {
-    background-image: url("food-meal.svg");
-}
-
-.event-icon-oatmeal {
-    background-image: url("food-oatmeal.svg");
-}
-
-.event-icon-sandwich {
-    background-image: url("food-sandwich.svg");
-}
-
-.event-icon-fruit {
-    background-image: url("food-fruit.svg");
-}
-
-.event-icon-drops {
-    background-image: url("drops.svg");
 }
 
 .sleepchart-options {
