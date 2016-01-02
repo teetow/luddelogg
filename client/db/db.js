@@ -18,8 +18,11 @@ Template.db.helpers({
     },
 });
 Template.db.events({
-    'click .js-syncnow': function(event, instance) {
-        Meteor.call("dbLoadSheetData");
+    'click .js-synclatest': function(event, instance) {
+        Meteor.call("dbSyncSheet", "latest");
+    },
+    'click .js-syncfull': function(event, instance) {
+        Meteor.call("dbSyncSheet", "archive");
     },
     'click .js-clear': function(event, instance) {
         Meteor.call("dbClearData");

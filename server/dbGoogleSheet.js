@@ -1,7 +1,12 @@
 Meteor.startup(function() {
     ClearMessages();
-    AddMessage("Starting up.---------------------------------------------------", "Meteor.startup");
-    initSheetLoader();
+    AddMessage("Starting up.................................", "Meteor.startup");
+    init();
+    if (SheetLoaderHandle)
+        startSyncLoop("latest");
+    else {
+        AddMessage("Failed to initialize.", "startup");
+    }
     EventLog._ensureIndex({
         id: 1
     }, {
@@ -9,8 +14,8 @@ Meteor.startup(function() {
     });
 });
 Meteor.methods({
-    dbLoadSheetData: () => {
-        loadSheetData();
+    dbSyncSheet: (sheetName) => {
+        performSync(sheetName);
     },
     dbClearData: () => {
         AddMessage("Clearing eventlog.", "dbClearData");
@@ -19,67 +24,78 @@ Meteor.methods({
 });
 
 let SheetLoaderHandle;
-let SheetHandle;
-let spreadsheetLoaderOptions;
-let SheetLoginHandle;
+let SheetCredentials;
 let SheetLoginTimer;
 let SheetSyncTimer;
 
-function initSheetLoader() {
-    AddMessage("Initializing sheet loader.", "initSheetLoader");
+function init() {
+    AddMessage("Initializing...", "initSheetLoader");
     SheetLoaderHandle = Meteor.npmRequire('edit-google-spreadsheet');
-    spreadsheetLoaderOptions = JSON.parse(Assets.getText("luddelogg-auth.json"));
-    loadSheetData();
-    if (!SheetLoginTimer)
-        SheetLoginTimer = Meteor.setInterval(loadSheetData, 3000000); // login every 50 minutes
+    SheetCredentials = JSON.parse(Assets.getText("luddelogg-auth.json")); // could be a collection in the future
 }
 
-function loadSheetData() {
-    AddMessage("Loading...", "loadSheetData");
-    let wrapSpreadsheetLoad = Meteor.wrapAsync(SheetLoaderHandle.load, SheetLoaderHandle);
-    wrapSpreadsheetLoad(spreadsheetLoaderOptions, function(err, sheetHandle) {
-        if (err) {
-            AddMessage(err, "loadSheet");
-            throw err;
-        }
-        SheetHandle = sheetHandle;
-        if (!SheetSyncTimer)
-            SheetSyncTimer = Meteor.setTimeout(fetchSheetData, 3000);
+function performSync(sheetName) {
+    let localOptions = SheetCredentials[sheetName];
+    if (!localOptions)
+        return;
+    let sheetHandle = getSheetHandle(localOptions);
+    let sheetData = getSheetData(sheetHandle);
+    importAndParseSheetData(sheetData);
+}
+
+function startSyncLoop(sheetName) {
+    let localOptions = SheetCredentials[sheetName];
+    if (!localOptions)
+        return;
+    let sheetHandle = getSheetHandle(localOptions);
+    performLoopedSync(sheetHandle);
+    if (!SheetLoginTimer)
+        SheetLoginTimer = Meteor.setInterval(getSheetHandle, 3000000); // login every 50 minutes
+}
+
+function performLoopedSync(sheetHandle) {
+    let sheetData = getSheetData(sheetHandle);
+    importAndParseSheetData(sheetData);
+    SheetSyncTimer = Meteor.setTimeout(() => {
+        performLoopedSync(sheetHandle);
+    }, 30000); // sync after 30s
+}
+
+function getSheetHandle(loaderOptions) {
+    AddMessage("Loading...", "getSheetHandle");
+    let loadSpreadsheetSync = Meteor.wrapAsync(SheetLoaderHandle.load, SheetLoaderHandle);
+    return loadSpreadsheetSync(loaderOptions);
+}
+
+function getSheetData(sheetHandle) {
+    if (!sheetHandle) {
+        throw "Cannot fetch Google sheet -- Sheet not loaded.";
+    }
+    if (isSyncing("getSheetData")) {
+        let message = "Aborted fetch -- already syncing.";
+        AddMessage(message, "getSheetData");
+        throw message;
+    }
+    AddMessage("Requesting sheet data...", "getSheetData");
+    startSync("getSheetData");
+    let importSheetDataFunc = Meteor.wrapAsync(sheetHandle.receive, sheetHandle);
+    return importSheetDataFunc({
+        getValues: true
     });
 }
 
-function fetchSheetData() {
-    if (!SheetHandle) {
-        throw "Cannot fetch Google sheet -- Sheet not loaded.";
-    }
-    if (isSyncing("fetchSheetData")) {
-        let message = "Aborted fetch -- already syncing.";
-        AddMessage(message, "fetchSheetData");
-        throw message;
-    }
-    AddMessage("Requesting sheet data...", "fetchSheetData");
-    startSync("fetchSheetData");
-    var importSheetDataFunc = Meteor.wrapAsync(SheetHandle.receive, SheetHandle);
-    importSheetDataFunc({
-        getValues: true
-    }, importAndParseSheetData);
-}
-
-function importAndParseSheetData(err, row, info) {
+function importAndParseSheetData(sheetData) {
     AddMessage("Importing sheet data...", "importAndParseSheetData");
     try {
-        parseSheetData(err, row, info);
+        parseSheetData(sheetData);
     } catch (e) {
         AddMessage(JSON.stringify(e), "importAndParseSheetData");
     }
     stopSync("importAndParseSheetData");
 }
 
-function parseSheetData(err, rows, info) {
-    if (err) {
-        throw err;
-    }
-    var data = _.values(rows);
+function parseSheetData(sheetData) {
+    var data = _.values(sheetData);
     var numRows = data.length;
     var reportEvery = 100;
     data.forEach(function(sheetRow, rowindex, rowarray) {
@@ -138,7 +154,6 @@ function parseSheetData(err, rows, info) {
             upsert: true
         });
     });
-    SheetSyncTimer = Meteor.setTimeout(fetchSheetData, 60000); // sync every 30s
 }
 let syncStatus = new ReactiveVar(false);
 
