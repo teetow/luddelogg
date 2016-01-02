@@ -1,5 +1,5 @@
 <template name="sleepchartRow">
-    <sleeprow class="{{#if isWeekend}}mod-weekend{{/if}} {{#if isToday}}mod-today{{/if}}">
+    <sleeprow class="{{#if isWeekend}}mod-weekend{{/if}} {{#if isToday}}mod-today{{/if}}" title="{{rowtooltip}}">
         <rowheader>{{shortdate date}}</rowheader>
         <rowevents>
             {{#each sleepchartEvents}}

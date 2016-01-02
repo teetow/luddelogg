@@ -60,6 +60,7 @@ Template.sleepchart.onRendered(function() {
     instance.secondTimer = Meteor.setInterval(() => {
         Session.set("now", moment().toISOString());
     }, 30000);
+    instance.$("sleepchart").tooltip();
 });
 Template.sleepchart.onDestroyed(function() {
     let instance = this;
@@ -99,21 +100,6 @@ Template.sleepchart.helpers({
     }
 });
 Template.sleepchart.events({
-    "mouseenter .sleepchart-row-event": function(e, tpl) {
-        $(e.currentTarget).addClass("mod-hilight");
-        let targetDiv = $(e.currentTarget);
-        Session.set("tooltipInfo", {
-            pos: {
-                left: (targetDiv.offset().left - $(window).scrollLeft()) + (targetDiv.outerWidth() / 2) - 18 + "px",
-                top: targetDiv.offset().top - $(window).scrollTop() - 18 + "px"
-            },
-            data: this.data,
-        });
-    },
-    "mouseleave .sleepchart-row-event": function(e, tpl) {
-        $(e.currentTarget).removeClass("mod-hilight");
-        Session.set("tooltipInfo", undefined);
-    },
     "click .js-loadmore": function() {
         let instance = Template.instance();
         let limit = instance.limit.get() + instance.numDays;

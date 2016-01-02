@@ -1,5 +1,5 @@
 <template name="sleepchartEvent">
-    <event class="event-sleep {{colorClass}}" style="left: {{left}}%; width: {{width}}%;">
+    <event class="event-sleep {{colorClass}}" title="{{data.time}} - {{data.end}} ({{data.duration}})" style="left: {{left}}%; width: {{width}}%;">
         {{#if options.showstarttimes.value}}
             <div class="event-time"> {{data.time}} </div>
         {{/if}}
@@ -22,15 +22,9 @@
 </template>
 
 <template name="sleepchartGenericEvent">
-    <event class="{{eventclass}}" style="left: {{left}}%;">
+    <event class="{{eventclass}}" style="left: {{left}}%;" title="{{data.time}}: {{data.activity}} ({{data.label}})">
         {{#each icons}}
             <div class="event-icon {{iconclass}}"></div>
         {{/each}}
     </event>
-</template>
-
-<template name="sleepchartTooltip">
-    <div class="sleepchart-tooltip" style="left: {{tooltipinfo.pos.left}}; top:{{tooltipinfo.pos.top}};">
-        <div class="sleepchart-tooltip-info">{{tooltipinfo.text}}</div>
-    </div>
 </template>

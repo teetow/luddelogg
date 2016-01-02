@@ -28,4 +28,15 @@ Template.sleepchartRow.helpers({
     now: function() {
         return moment(Session.get("now")).format("HH:mm");
     },
+    rowtooltip: function() { 
+        let instance = this;
+
+        let totalSleep = moment.duration(0, "hours");
+        _.each(this.sleepchartEvents, function(event) {
+            if (event.data.activity == "sleep") {
+                totalSleep.add(event.data.duration);
+            }
+        });
+        return `Sleep: ${totalSleep.hours()}h${totalSleep.minutes()}m`;
+    },
 });

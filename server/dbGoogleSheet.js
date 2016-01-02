@@ -29,8 +29,9 @@ function initSheetLoader() {
     AddMessage("Initializing sheet loader.", "initSheetLoader");
     SheetLoaderHandle = Meteor.npmRequire('edit-google-spreadsheet');
     spreadsheetLoaderOptions = JSON.parse(Assets.getText("luddelogg-auth.json"));
-    if (!SheetSyncTimer)
-        SheetSyncTimer = Meteor.setTimeout(loadSheetData, 30000); // wait 30s before syncing
+    loadSheetData();
+    if (!SheetLoginTimer)
+        SheetLoginTimer = Meteor.setInterval(loadSheetData, 3000000); // login every 50 minutes
 }
 
 function loadSheetData() {
@@ -42,9 +43,8 @@ function loadSheetData() {
             throw err;
         }
         SheetHandle = sheetHandle;
-        fetchSheetData();
-        if (!SheetLoginTimer)
-            SheetLoginTimer = Meteor.setTimeout(loadSheetData, 3000000); // login every 50 minutes
+        if (!SheetSyncTimer)
+            SheetSyncTimer = Meteor.setTimeout(fetchSheetData, 3000);
     });
 }
 
@@ -73,8 +73,6 @@ function importAndParseSheetData(err, row, info) {
         AddMessage(JSON.stringify(e), "importAndParseSheetData");
     }
     stopSync("importAndParseSheetData");
-    if (!SheetSyncTimer)
-        SheetSyncTimer = Meteor.setTimeout(fetchSheetData, 30000); // wait 30 seconds, then fetch again
 }
 
 function parseSheetData(err, rows, info) {
@@ -140,6 +138,7 @@ function parseSheetData(err, rows, info) {
             upsert: true
         });
     });
+    SheetSyncTimer = Meteor.setTimeout(fetchSheetData, 60000); // sync every 30s
 }
 let syncStatus = new ReactiveVar(false);
 
