@@ -38,9 +38,15 @@ function performSync(sheetName) {
     let localOptions = SheetCredentials[sheetName];
     if (!localOptions)
         return;
-    let sheetHandle = getSheetHandle(localOptions);
-    let sheetData = getSheetData(sheetHandle);
-    importAndParseSheetData(sheetData);
+    try {
+        AddMessage(`Syncing ${sheetName}`, "performSync");
+        let sheetHandle = getSheetHandle(localOptions);
+        let sheetData = getSheetData(sheetHandle);
+        parseSheetData(sheetData);
+    } catch (e) {
+        AddMessage(JSON.stringify(e), "performSync");
+    }
+    stopSync("importAndParseSheetData");
 }
 
 function startSyncLoop(sheetName) {
@@ -54,8 +60,13 @@ function startSyncLoop(sheetName) {
 }
 
 function performLoopedSync(sheetHandle) {
-    let sheetData = getSheetData(sheetHandle);
-    importAndParseSheetData(sheetData);
+    try {
+        let sheetData = getSheetData(sheetHandle);
+        parseSheetData(sheetData);
+    } catch (e) {
+        AddMessage(JSON.stringify(e), "performLoopedSync");
+    }
+    stopSync("importAndParseSheetData");
     SheetSyncTimer = Meteor.setTimeout(() => {
         performLoopedSync(sheetHandle);
     }, 30000); // sync after 30s
@@ -72,9 +83,7 @@ function getSheetData(sheetHandle) {
         throw "Cannot fetch Google sheet -- Sheet not loaded.";
     }
     if (isSyncing("getSheetData")) {
-        let message = "Aborted fetch -- already syncing.";
-        AddMessage(message, "getSheetData");
-        throw message;
+        throw "Aborted fetch -- already syncing.";
     }
     AddMessage("Requesting sheet data...", "getSheetData");
     startSync("getSheetData");
@@ -82,16 +91,6 @@ function getSheetData(sheetHandle) {
     return importSheetDataFunc({
         getValues: true
     });
-}
-
-function importAndParseSheetData(sheetData) {
-    AddMessage("Importing sheet data...", "importAndParseSheetData");
-    try {
-        parseSheetData(sheetData);
-    } catch (e) {
-        AddMessage(JSON.stringify(e), "importAndParseSheetData");
-    }
-    stopSync("importAndParseSheetData");
 }
 
 function parseSheetData(sheetData) {
