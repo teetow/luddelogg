@@ -60,7 +60,14 @@ Template.sleepchart.onRendered(function() {
     instance.secondTimer = Meteor.setInterval(() => {
         Session.set("now", moment().toISOString());
     }, 30000);
-    instance.$("sleepchart").tooltip();
+    instance.$("sleepchart").tooltip({
+        position: {
+            my: "bottom",
+            at: "center",
+            collision: "flipfit",
+        },
+        tooltipClass: "ui__tooltip-sleepchart"
+    });
 });
 Template.sleepchart.onDestroyed(function() {
     let instance = this;
