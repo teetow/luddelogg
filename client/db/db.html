@@ -1,5 +1,5 @@
 <template name="db">
-    <div class="ui-card">
+    <card>
         <div class="ui-buttonbar db-actions">
             <div class="ui-button js-clear">Clear data</div>
             <div class="ui-button js-synclatest">Import latest</div>
@@ -17,7 +17,7 @@
                 <div class="ui-button ui-button-tiny js-clearmessages">Clear Messages</div>
             {{/if}}
         </div>
-    </div>
+    </card>
     {{> dbLog}}
 </template>
 <template name="messageLogEntry">
@@ -30,7 +30,7 @@
     {{/if}}
 </template>
 <template name="dbLog">
-    <div class="ui-card">
+    <card>
         <div class="db-info">
             <div class="db-info-eventrows">Eventlog: {{numEventRows}} rows ({{numEventRowsShown}} shown)</div>
         </div>
@@ -64,7 +64,7 @@
         {{else}}
             <h3>Loading...</h3>
         {{/if}}
-    </div>
+    </card>
 </template>
 <template name="dbLogEntry">
     <div class="db-log-row">

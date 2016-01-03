@@ -117,13 +117,15 @@ Template.sleepchart.events({
     "click .js-loadmore": function() {
         let instance = Template.instance();
         let limit = instance.limit.get() + instance.numDays;
+        let html = instance.$("sleepchart:not(.placeholder)").html();
+        instance.placeholder.set(html);
         instance.limit.set(limit);
     },
     "click .js-loadall": function() {
         let instance = Template.instance();
-        let html = instance.$("sleepchart").html();
+        let html = instance.$("sleepchart:not(.placeholder)").html();
         instance.placeholder.set(html);
-        Template.instance().limit.set(0);
+        instance.limit.set(0);
     },
 });
 

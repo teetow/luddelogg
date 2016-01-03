@@ -1,6 +1,6 @@
 <template name="input">
     {{#if sheetReady.get}}
-    <div class="input-section ui-card">
+    <card class="input-section">
         <h4>Add an event:</h4>
         <div class="input-choices">
         	{{> inputSection selectionTree}}
@@ -9,7 +9,7 @@
 		    <button class="ui-button mod-spaceleft js-cancel">Cancel</button>
 		    <button class="ui-button {{#if hasEnoughData}}mod-active{{/if}} js-done">Done</button>
 	    </div>
-    </div>
+    </card>
     {{else}}
     <h3>Loading...</h3> {{/if}}
 </template>

@@ -1,7 +1,7 @@
 Template.sleepchartRow.helpers({
     shortdate: function(date) {
         var date = moment(date, "YYYY-MM-DD");
-        return date.format("ddd DD");
+        return date.format("YYYY-MM-DD");
     },
     isWeekend: function() {
         var ts = moment(this.date, "YYYY-MM-DD");

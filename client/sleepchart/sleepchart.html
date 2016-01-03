@@ -1,28 +1,33 @@
 <template name="sleepchart">
-    <div class="sleepchart-options">
-        {{#each options}}
-            {{> Template.dynamic template=sleepchartOptionTemplate}}
-        {{/each}}
-    </div>
-    <sleepchart>
-    {{#if Template.subscriptionsReady}}
-        {{#each sleepRows}}
-            {{> sleepchartRow}}
-        {{/each}}
-    {{else}}
-        {{{placeholder}}}
-    {{/if}}
-    </sleepchart>
-    {{#if Template.subscriptionsReady}}
-        {{#if loadMore}}
-            <div class="ui-buttonbar db-actions">
-                <div class="ui-button ui-button-tiny js-loadmore">
-                    {{#if showingAll}}Show less{{else}}Show more{{/if}}
+    <card>
+        <div class="sleepchart-options">
+            {{#each options}}
+                {{> Template.dynamic template=sleepchartOptionTemplate}}
+            {{/each}}
+        </div>
+        <sleepchart>
+            {{#if Template.subscriptionsReady}}
+                {{#each sleepRows}}
+                    {{> sleepchartRow}}
+                {{/each}}
+            {{else}}
+                <placeholder>
+                    {{{placeholder}}}
+                </placeholder>
+                <loaderbox>
+                    <div class="loader"></div>
+                </loaderbox>
+            {{/if}}
+        </sleepchart>
+        {{#if Template.subscriptionsReady}}
+            {{#if loadMore}}
+                <div class="ui-buttonbar db-actions">
+                    <div class="ui-button ui-button-tiny js-loadmore">
+                        {{#if showingAll}}Show less{{else}}Show more{{/if}}
+                    </div>
+                    <div class="ui-button ui-button-tiny js-loadall">Show all</div>
                 </div>
-                <div class="ui-button ui-button-tiny js-loadall">Show all</div>
-            </div>
+            {{/if}}
         {{/if}}
-    {{else}}
-        <h3>Loading...</h3>
-    {{/if}}
+    </card>
 </template>

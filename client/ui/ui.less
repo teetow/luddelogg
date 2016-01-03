@@ -1,3 +1,4 @@
+@import 'theme.lessimport';
 @color-accentgrey: hsl(210, 5%, 95%);
 @color-blue: hsla(200, 85%, 50%, 100%);
 @color-blue-active: hsla(200, 90%, 40%, 100%);
@@ -21,7 +22,7 @@ h6 {
     padding: 0;
 }
 
-.ui-card {
+card {
     display: flex;
     flex-flow: column nowrap;
     background-color: white;
@@ -113,9 +114,7 @@ h6 {
     margin-right: auto;
 }
 
-.ui-tooltip {
-    
-}
+.ui-tooltip {}
 
 @media only screen and (min-device-width: 320px) and (max-device-width: 480px) and (-webkit-min-device-pixel-ratio: 2) {
     body {
@@ -123,12 +122,12 @@ h6 {
         padding: 0;
         margin: 0;
     }
-    .ui-card {
+    card {
         min-width: initial;
         padding: 12px;
         margin: 12px;
     }
-    .ui-card + .ui-card {
+    card + card {
         margin: 0 12px 12px;
     }
     .db-messages {
@@ -141,13 +140,13 @@ h6 {
 
 // iphone 6 in landscape
 @media only screen and (min-device-width: 320px) and (max-device-width: 667px) and (-webkit-min-device-pixel-ratio: 2) {
-    .ui-card {
+    card {
         overflow: auto;
         min-width: initial;
         padding: 18px;
         margin: 18px;
     }
-    .ui-card + .ui-card {
+    card + card {
         margin: 0 18px 18px;
     }
     .sleepchart {
@@ -174,5 +173,68 @@ h6 {
     }
     .db-log {
         font-size: 0.85em;
+    }
+}
+
+.loader:before,
+.loader:after,
+.loader {
+    border-radius: 50%;
+    width: 2.5em;
+    height: 2.5em;
+    -webkit-animation-fill-mode: both;
+    animation-fill-mode: both;
+    -webkit-animation: load7 1.8s infinite ease-in-out;
+    animation: load7 1.8s infinite ease-in-out;
+}
+
+.loader {
+    font-size: 10px;
+    margin: auto;
+    position: relative;
+    text-indent: -9999em;
+    -webkit-transform: translateZ(0);
+    -ms-transform: translateZ(0);
+    transform: translateZ(0);
+    -webkit-animation-delay: -0.16s;
+    animation-delay: -0.16s;
+}
+
+.loader:before {
+    left: -3.5em;
+    -webkit-animation-delay: -0.32s;
+    animation-delay: -0.32s;
+}
+
+.loader:after {
+    left: 3.5em;
+}
+
+.loader:before,
+.loader:after {
+    content: '';
+    position: absolute;
+    top: 0;
+}
+
+@-webkit-keyframes load7 {
+    0%,
+    80%,
+    100% {
+        box-shadow: 0 2.5em 0 -1.3em @theme-loader-fg;
+    }
+    40% {
+        box-shadow: 0 2.5em 0 0 @theme-loader-fg;
+    }
+}
+
+@keyframes load7 {
+    0%,
+    80%,
+    100% {
+        box-shadow: 0 2.5em 0 -1.3em @theme-loader-fg;
+    }
+    40% {
+        box-shadow: 0 2.5em 0 0 @theme-loader-fg;
     }
 }
