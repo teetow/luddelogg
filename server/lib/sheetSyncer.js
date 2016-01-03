@@ -2,6 +2,7 @@ let SheetLoaderHandle = Meteor.npmRequire('edit-google-spreadsheet');
 
 SheetSyncer = class SheetSyncer {
 	constructor(credentials) {
+		this.identity = Math.floor(Math.random() * 9);
 		this.credentials = credentials;
 		this.isSyncing = false;
 	}
@@ -12,33 +13,31 @@ SheetSyncer = class SheetSyncer {
 			this._getSheetHandleLoop();
 			this._getSheetDataLoop();
 		} else {
-			this.loginHandle = this._getSheetHandle();
-			this.dataHandle = this._getSheetData();
-			this._callback();
+			let loginHandle = this._getSheetHandle(this.credentials);
+			let dataHandle = this._getSheetData(loginHandle);
+			this._callback(dataHandle);
 		}
 	}
 
-	_callback() {
-		if (this.callback)
-			this.callback(this.dataHandle);
+	_callback(dataHandle) {
+		if (this.callback && dataHandle)
+			this.callback(dataHandle);
 	}
 
-	_getSheetHandle() {
-		AddMessage("Loading...", "_getSheetHandle");
+	_getSheetHandle(credentials) {
 		let loadSpreadsheetSync = Meteor.wrapAsync(SheetLoaderHandle.load, SheetLoaderHandle);
-		return loadSpreadsheetSync(this.credentials);
+		return loadSpreadsheetSync(credentials);
 	}
 
-	_getSheetData() {
-		if (!this.loginHandle) {
+	_getSheetData(loginHandle) {
+		if (!loginHandle) {
 			throw "Cannot fetch Google sheet -- Sheet not loaded.";
 		}
 		if (this.isSyncing) {
 			throw "Aborted fetch -- already syncing.";
 		}
-		AddMessage("Requesting sheet data...", "_getSheetData");
 		this.isSyncing = true;
-		let receiveSync = Meteor.wrapAsync(this.loginHandle.receive, this.loginHandle);
+		let receiveSync = Meteor.wrapAsync(loginHandle.receive, loginHandle);
 		let data = receiveSync({
 			getValues: true
 		});
@@ -48,7 +47,7 @@ SheetSyncer = class SheetSyncer {
 
 	_getSheetHandleLoop() {
 		let self = this;
-		self.loginHandle = self._getSheetHandle();
+		self.loginHandle = self._getSheetHandle(self.credentials);
 		Meteor.setTimeout(() => {
 			self._getSheetHandleLoop();
 		}, 3000000);
@@ -56,10 +55,10 @@ SheetSyncer = class SheetSyncer {
 
 	_getSheetDataLoop(callback) {
 		let self = this;
-		self.dataHandle = self._getSheetData();
+		let data = self._getSheetData(self.loginHandle);
 		Meteor.setTimeout(() => {
 			self._getSheetDataLoop();
 		}, 30000);
-		self._callback();
+		self._callback(data);
 	}
 }

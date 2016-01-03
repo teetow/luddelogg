@@ -41,7 +41,7 @@ Meteor.methods({
     dbClearData: function() {
         EventLog.remove({});
     },
-    dbFetchSheetData: function() {},
+    dbSyncSheet: function() {},
     dbAddEntry: function(newLogInfo) {},
 });
 

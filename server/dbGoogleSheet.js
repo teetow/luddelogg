@@ -11,7 +11,12 @@ Meteor.startup(function() {
 });
 Meteor.methods({
     dbSyncSheet: (sheetName) => {
-        performSync(sheetName);
+        try {
+            AddMessage(`Syncing ${sheetName}`, "dbSyncSheet");
+            performSync(sheetName);
+        } catch (e) {
+            AddMessage(JSON.stringify(e), "dbSyncSheet");
+        }
     },
     dbClearData: () => {
         AddMessage("Clearing eventlog.", "dbClearData");
@@ -33,7 +38,9 @@ function performSync(sheetName) {
         return;
     }
     let sheetSyncer = new SheetSyncer(localOptions);
-    sheetSyncer.requestData(parseSheetData, false);
+    Meteor.defer(() => {
+        sheetSyncer.requestData(parseSheetData, false);
+    });
 }
 
 function startSyncLoop(sheetName) {
