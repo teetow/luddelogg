@@ -13,9 +13,14 @@ SheetSyncer = class SheetSyncer {
 			this._getSheetHandleLoop();
 			this._getSheetDataLoop();
 		} else {
-			let loginHandle = this._getSheetHandle(this.credentials);
-			let dataHandle = this._getSheetData(loginHandle);
-			this._callback(dataHandle);
+			try {
+				let loginHandle = this._getSheetHandle(this.credentials);
+				let dataHandle = this._getSheetData(loginHandle);
+				this._callback(dataHandle);
+
+			} catch (e) {
+				throw (`Error during sync: ${JSON.stringify(e)}`);
+			}
 		}
 	}
 
@@ -41,21 +46,37 @@ SheetSyncer = class SheetSyncer {
 		let data = receiveSync({
 			getValues: true
 		});
+
 		this.isSyncing = false;
 		return data;
 	}
 
 	_getSheetHandleLoop() {
 		let self = this;
-		self.loginHandle = self._getSheetHandle(self.credentials);
-		Meteor.setTimeout(() => {
-			self._getSheetHandleLoop();
-		}, 3000000);
+		try {
+			self.loginHandle = self._getSheetHandle(self.credentials);
+			Meteor.setTimeout(() => {
+				self._getSheetHandleLoop();
+			}, 3000000);
+		} catch (e) {
+			console.log(`Error getting sheet handle: ${JSON.stringify(e)}`);
+			// if an error occurred, try again in just 30s
+			Meteor.setTimeout(() => {
+				self._getSheetHandleLoop();
+			}, 30000);
+
+		}
 	}
 
 	_getSheetDataLoop(callback) {
 		let self = this;
-		let data = self._getSheetData(self.loginHandle);
+		let data;
+		try {
+			data = self._getSheetData(self.loginHandle);
+		} catch (e) {
+			console.log(`Error getting sheet handle: ${JSON.stringify(e)}`);
+		}
+
 		Meteor.setTimeout(() => {
 			self._getSheetDataLoop();
 		}, 30000);
