@@ -27,6 +27,7 @@ kadira:dochead
 meteorhacks:npm
 mizzao:jquery-ui
 momentjs:moment
+oaf:moment-duration-format
 seba:minifiers-autoprefixer
 tmeasday:publish-counts
 peerlibrary:reactive-publish
