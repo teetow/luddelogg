@@ -21,6 +21,7 @@ reactive-var
 reactive-dict
 
 aldeed:moment-timezone
+highcharts:highcharts-meteor
 kadira:blaze-layout
 kadira:flow-router
 kadira:dochead

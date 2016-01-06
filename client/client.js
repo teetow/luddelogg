@@ -27,6 +27,7 @@ BlazeLayout.setRoot('body');
 FlowRouter.route("/",           {action: function(params) {BlazeLayout.render("mainLayout", {content: "dashboard" }); } });
 FlowRouter.route("/dashboard",  {action: function(params) {BlazeLayout.render("mainLayout", {content: "dashboard" }); } });
 FlowRouter.route("/sleepchart", {action: function(params) {BlazeLayout.render("mainLayout", {content: "sleepchart"}); } });
+FlowRouter.route("/sleeplog",   {action: function(params) {BlazeLayout.render("mainLayout", {content: "sleeplog"  }); } });
 FlowRouter.route("/lastlog",    {action: function(params) {BlazeLayout.render("mainLayout", {content: "lastlog"   }); } });
 FlowRouter.route("/input",      {action: function(params) {BlazeLayout.render("mainLayout", {content: "input"     }); } });
 FlowRouter.route("/db",         {action: function(params) {BlazeLayout.render("mainLayout", {content: "db"        }); } });
