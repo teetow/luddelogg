@@ -128,6 +128,12 @@ function getState(todayEvents) {
                 var end = moment.utc(item.endtimestamp);
                 var duration = moment.duration(end.diff(start));
                 state.totalSleep += duration;
+            } else {
+                // create interim sleep duration
+                let start = moment.utc(item.timestamp);
+                let end = moment.utc();
+                let duration = moment.duration(end.diff(start));
+                state.totalSleep += duration;
             }
         } else if (item.activity == "food") {
             state.foodEvents.push(item);
