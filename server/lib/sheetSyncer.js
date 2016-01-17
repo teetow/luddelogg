@@ -1,32 +1,30 @@
 let SheetLoaderHandle = Meteor.npmRequire('edit-google-spreadsheet');
 
 SheetSyncer = class SheetSyncer {
-	constructor(credentials) {
+	constructor() {
 		this.identity = Math.floor(Math.random() * 9);
-		this.credentials = credentials;
 		this.isSyncing = false;
 	}
 
-	requestData(callback, loop = false) {
-		this.callback = callback;
-		if (loop) {
-			this._getSheetHandleLoop();
-			this._getSheetDataLoop();
+	requestData(options = {loop: false}) {
+		if (options.credentials) {
+			this.credentials = this._getSheetHandle(options.credentials);
+		}
+
+		if (options.loop) {
+			this._getSheetHandleLoop(options.credentials);
+			this._getSheetDataLoop(options.callback);
 		} else {
 			try {
-				let loginHandle = this._getSheetHandle(this.credentials);
+				let loginHandle = this._getSheetHandle(options.credentials);
 				let dataHandle = this._getSheetData(loginHandle);
-				this._callback(dataHandle);
+				if (options.callback && dataHandle)
+					options.callback(dataHandle);
 
 			} catch (e) {
-				throw (`Error during sync: ${JSON.stringify(e)}`);
+				throw (`Error during request: ${JSON.stringify(e)}`);
 			}
 		}
-	}
-
-	_callback(dataHandle) {
-		if (this.callback && dataHandle)
-			this.callback(dataHandle);
 	}
 
 	_getSheetHandle(credentials) {
@@ -39,36 +37,41 @@ SheetSyncer = class SheetSyncer {
 			throw "Cannot fetch Google sheet -- Sheet not loaded.";
 		}
 		if (this.isSyncing) {
-			throw "Aborted fetch -- already syncing.";
+			AddMessage("Aborted fetch -- already syncing.", "_getSheetData");
+			return;
 		}
 		this.isSyncing = true;
 		let receiveSync = Meteor.wrapAsync(loginHandle.receive, loginHandle);
-		let data = receiveSync({
-			getValues: true
-		});
-
-		this.isSyncing = false;
-		return data;
+		try {
+			let data = receiveSync({
+				getValues: true
+			});
+			return data;
+		} catch (e) {
+			throw e;
+		} finally {
+			this.isSyncing = false;
+		}
 	}
 
-	_getSheetHandleLoop() {
+	_getSheetHandleLoop(credentials) {
 		let self = this;
+		let timer = 1000 * 60 * 50; // 50 mins
 		try {
-			self.loginHandle = self._getSheetHandle(self.credentials);
-			Meteor.setTimeout(() => {
-				self._getSheetHandleLoop();
-			}, 3000000);
+			self.loginHandle = self._getSheetHandle(credentials);
 		} catch (e) {
 			console.log(`Error getting sheet handle: ${JSON.stringify(e)}`);
-			// if an error occurred, try again in just 30s
+			timer = 1000 * 30; // 30 secs
+		} finally {
 			Meteor.setTimeout(() => {
-				self._getSheetHandleLoop();
-			}, 30000);
-
+				self._getSheetHandleLoop(credentials);
+			}, timer);
 		}
 	}
 
 	_getSheetDataLoop(callback) {
+		if (!callback)
+			throw "missing callback";
 		let self = this;
 		let data;
 		try {
@@ -78,8 +81,12 @@ SheetSyncer = class SheetSyncer {
 		}
 
 		Meteor.setTimeout(() => {
-			self._getSheetDataLoop();
+			self._getSheetDataLoop(callback);
 		}, 30000);
-		self._callback(data);
+
+		if (data)
+			callback(data);
+		else
+			throw ("fetch returned no data.");
 	}
 }

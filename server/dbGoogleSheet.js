@@ -24,31 +24,34 @@ Meteor.methods({
     },
 });
 
-let SheetCredentials;
+let LogSheetSyncer = new SheetSyncer();
 
 function init() {
     AddMessage("Initializing...", "initSheetLoader");
     SheetCredentials = JSON.parse(Assets.getText("luddelogg-auth.json")); // could be a collection in the future
-}
 
-function performSync(sheetName) {
-    let localOptions = SheetCredentials[sheetName];
+    let localOptions = SheetCredentials["latest"];
     if (!localOptions) {
         AddMessage("No valid credentials.", "performSync");
         return;
     }
-    let sheetSyncer = new SheetSyncer(localOptions);
+}
+
+function performSync(sheetName) {
     Meteor.defer(() => {
-        sheetSyncer.requestData(parseSheetData, false);
+        LogSheetSyncer.requestData({
+            callback: parseSheetData,
+            credentials: SheetCredentials[sheetName],
+        });
     });
 }
 
 function startSyncLoop(sheetName) {
-    let localOptions = SheetCredentials[sheetName];
-    if (!localOptions)
-        return;
-    let loopedSheetSyncer = new SheetSyncer(localOptions);
-    loopedSheetSyncer.requestData(parseSheetData, true);
+    LogSheetSyncer.requestData({
+        callback: parseSheetData,
+        credentials: SheetCredentials[sheetName],
+        loop: true,
+    });
 }
 
 function parseSheetData(sheetData) {
