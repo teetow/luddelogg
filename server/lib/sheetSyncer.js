@@ -60,7 +60,7 @@ SheetSyncer = class SheetSyncer {
 		try {
 			self.loginHandle = self._getSheetHandle(credentials);
 		} catch (e) {
-			console.log(`Error getting sheet handle: ${JSON.stringify(e)}`);
+			console.log(`Error logging into Google: ${JSON.stringify(e)}`);
 			timer = 1000 * 30; // 30 secs
 		} finally {
 			Meteor.setTimeout(() => {
@@ -77,7 +77,7 @@ SheetSyncer = class SheetSyncer {
 		try {
 			data = self._getSheetData(self.loginHandle);
 		} catch (e) {
-			console.log(`Error getting sheet handle: ${JSON.stringify(e)}`);
+			console.log(`Error fetching sheet: ${JSON.stringify(e)}`);
 		}
 
 		Meteor.setTimeout(() => {
