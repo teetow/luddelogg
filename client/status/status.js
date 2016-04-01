@@ -1,3 +1,5 @@
+import moment from "moment";
+
 Template.status.onCreated(function() {
 
     let instance = this;

@@ -1,3 +1,5 @@
+import Highcharts from "highcharts";
+
 (function (H) {
 
 	// create shortcuts

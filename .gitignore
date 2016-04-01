@@ -14,3 +14,4 @@ luddelogg.sublime-project
 luddelogg.sublime-workspace
 private/olddata.csv
 *.tags1
+node_modules/*

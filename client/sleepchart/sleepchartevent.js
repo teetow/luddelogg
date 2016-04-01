@@ -1,3 +1,5 @@
+import moment from "moment";
+
 var EventiconTable = {
     bottle: "event-icon-bottle",
     meal: "event-icon-meal",

@@ -1,3 +1,5 @@
+import moment from "moment";
+
 Template.sleepchartRow.helpers({
     shortdate: function(date) {
         var date = moment(date, "YYYY-MM-DD");

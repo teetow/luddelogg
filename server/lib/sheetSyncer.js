@@ -1,4 +1,5 @@
-let SheetLoaderHandle = Meteor.npmRequire('edit-google-spreadsheet');
+import { moment } from "moment";
+let SheetLoaderHandle = require('edit-google-spreadsheet');
 
 SheetSyncer = class SheetSyncer {
 	constructor() {

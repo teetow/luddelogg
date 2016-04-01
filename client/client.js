@@ -1,3 +1,5 @@
+import moment from "moment";
+
 LogIconTable = {
     oatmeal: "logicon-food-oatmeal",
     sandwich: "logicon-food-sandwich",

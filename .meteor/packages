@@ -19,18 +19,12 @@ less
 insecure
 reactive-var
 reactive-dict
+modules
 
-aldeed:moment-timezone
-highcharts:highcharts-meteor
 kadira:blaze-layout
 kadira:flow-router
 kadira:dochead
-meteorhacks:npm
 mizzao:jquery-ui
-momentjs:moment
-oaf:moment-duration-format
 seba:minifiers-autoprefixer
 tmeasday:publish-counts
 peerlibrary:reactive-publish
-
-npm-container

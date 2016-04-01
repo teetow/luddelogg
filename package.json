@@ -1,0 +1,29 @@
+{
+  "name": "luddelogg",
+  "version": "1.0.0",
+  "author": "Johan Althoff",
+  "description": "Activity tracker for babies and toddlers.",
+  "main": "index.js",
+  "dependencies": {
+    "edit-google-spreadsheet": "^0.2.21",
+    "highcharts": "^4.2.3",
+    "load-script": "^1.0.0",
+    "meteor-node-stubs": "^0.2.1",
+    "moment": "^2.12.0",
+    "moment-duration-format": "^1.3.0",
+    "moment-timezone": "^0.5.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/teetow/luddelogg.git"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/teetow/luddelogg/issues"
+  },
+  "homepage": "https://github.com/teetow/luddelogg#readme"
+}

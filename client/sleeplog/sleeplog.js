@@ -1,3 +1,7 @@
+import moment from "moment";
+import "moment-duration-format";
+import Highcharts from "highcharts";
+
 Template.sleeplog.onCreated(function() {
 	moment.duration.fn.format.defaults.trim = false;
 	let instance = this;
@@ -28,7 +32,7 @@ Template.sleeplog.onRendered(function() {
 	let instance = this;
 	instance.chart = new Highcharts.Chart("chart_id", {
 		chart: {
-			type: "areaspline",
+			type: "column",
 			zoomType: "x",
 		},
 		legend: {
@@ -52,7 +56,7 @@ Template.sleeplog.onRendered(function() {
 			title: {
 				text: "Date",
 			},
-			dateTimeLabelFormats: { // don't display the dummy year
+			dateTimeLabelFormats: {
 				month: '%Y-%m-%d',
 				year: '%Y'
 			},
@@ -71,7 +75,7 @@ Template.sleeplog.onRendered(function() {
 			//offset: 0,
 		}],
 		plotOptions: {
-			areaspline: {
+			column: {
 				stacking: "normal",
 			},
 			series: {
@@ -84,7 +88,8 @@ Template.sleeplog.onRendered(function() {
 			data: [],
 			type: "spline",
 			enableMouseTracking: false,
-			color: "hsl(37, 100%, 50%)",
+			color: "transparent",
+			showInLegend: false,
 		}, {
 			name: "Nap sleep",
 			id: "napSleep",
@@ -104,7 +109,7 @@ Template.sleeplog.onRendered(function() {
 			linkedTo: "totalSleep",
 			algorithm: "SMA",
 			yAxis: 0,
-			periods: 30,
+			periods: 10,
 		}]
 	});
 	instance.autorun(() => {

@@ -1,3 +1,5 @@
+import moment from "moment";
+
 Meteor.publish("dbEventLog", function(userOptions) {
 	let localUserOptions = {};
 	_.extend(localUserOptions, {

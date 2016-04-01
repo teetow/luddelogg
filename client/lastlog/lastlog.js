@@ -1,3 +1,5 @@
+import moment from "moment";
+
 Template.lastlog.onCreated(function() {
     var instance = this;
     instance.subscribe("logToday");

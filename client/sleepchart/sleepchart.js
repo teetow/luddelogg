@@ -1,3 +1,5 @@
+import moment from "moment";
+
 /* beautify preserve:start */
 let optionsDefaults = {
     showstarttimes: { label: "Starts",    type: "checkbox", value: true,  },

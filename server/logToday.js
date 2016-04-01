@@ -1,3 +1,5 @@
+import moment from "moment";
+
 let now = new ReactiveVar();
 Meteor.setInterval(function() {
 	now.set(moment().toDate());

@@ -1,3 +1,5 @@
+import moment from "moment";
+
 Meteor.publish("dbMessageLog", function() {
 	return MessageLog.find();
 });
