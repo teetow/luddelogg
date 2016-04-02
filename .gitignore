@@ -4,7 +4,6 @@
 .meteor/.gitignore
 .meteor/.id
 .meteor/platforms
-.meteor/release
 .meteor/versions
 packages/*
 private/luddelogg.pem
