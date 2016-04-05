@@ -6,6 +6,7 @@ var EventiconTable = {
     oatmeal: "event-icon-oatmeal",
     sandwich: "event-icon-sandwich",
     fruit: "event-icon-fruit",
+    snack: "event-icon-snack",
     drops: "event-icon-drops",
     toothbrush: "event-icon-toothbrush",
 };
