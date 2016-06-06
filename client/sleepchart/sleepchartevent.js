@@ -1,7 +1,10 @@
 import moment from "moment";
 
 var EventiconTable = {
+    generic: "event-icon-generic",
     bottle: "event-icon-bottle",
+    breakfast: "event-icon-breakfast",
+    yoghurt: "event-icon-breakfast",
     meal: "event-icon-meal",
     oatmeal: "event-icon-oatmeal",
     sandwich: "event-icon-sandwich",
@@ -50,9 +53,15 @@ Template.sleepchartGenericEvent.helpers({
         var eventlabelwords = this.data.label.split(" ");
         eventlabelwords.forEach(function(word, wordindex, wordarray) {
             var iconentry = EventiconTable[word];
-            if (iconentry !== undefined) eventicons.push({
-                iconclass: iconentry
-            });
+            if (iconentry !== undefined) {
+                eventicons.push({
+                    iconclass: iconentry
+                });
+            } else {
+                eventicons.push({
+                    iconclass: "event-icon-generic"
+                });
+            }
         });
         return eventicons;
     },

@@ -25,6 +25,6 @@ kadira:blaze-layout
 kadira:flow-router
 kadira:dochead
 mizzao:jquery-ui
-seba:minifiers-autoprefixer
 tmeasday:publish-counts
 peerlibrary:reactive-publish
+seba:minifiers-autoprefixer
