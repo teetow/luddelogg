@@ -1,8 +1,4 @@
-@import 'theme.scss';
-$color-accentgrey: hsl(210, 5%, 95%);
-$color-blue: hsla(200, 85%, 50%, 100%);
-$color-blue-active: hsla(200, 90%, 40%, 100%);
-$color-transparent: hsla(200, 0%, 100%, 0%);
+@import "{}/client/ui/theme.scss";
 body {
     background-color: #f1f1f1;
     color: #333;

@@ -6,12 +6,12 @@
   "main": "index.js",
   "dependencies": {
     "edit-google-spreadsheet": "^0.2.21",
-    "highcharts": "^4.2.3",
+    "highcharts": "^4.2.5",
     "load-script": "^1.0.0",
     "meteor-node-stubs": "^0.2.1",
-    "moment": "^2.12.0",
+    "moment": "^2.14.1",
     "moment-duration-format": "^1.3.0",
-    "moment-timezone": "^0.5.3"
+    "moment-timezone": "^0.5.5"
   },
   "devDependencies": {},
   "scripts": {

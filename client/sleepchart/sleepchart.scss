@@ -17,8 +17,8 @@ sleepchart {
         height: 100%;
         .loader {
             position: absolute;
-            top: calc("50% - 12px");
-            left: calc("50% - 12px");
+            top: calc(50% - 12px);
+            left: calc(50% - 12px);
         }
     }
 }
@@ -43,7 +43,7 @@ rowevents {
     font-size: 12px;
     position: relative;
     flex: 1 1 auto;
-    height: calc("100% - 8px");
+    height: calc(100% - 8px);
 }
 
 event {
